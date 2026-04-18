@@ -15,7 +15,7 @@ const ContactPage = () => {
         setLoading(true);
         setError('');
         try {
-            await axios.post('$env:VITE_API_URL/api/payment/contact-form', form);
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/payment/contact-form`, form);
             setSuccess(true);
             setForm({ name: '', email: '', phone: '', subject: '', message: '' });
         } catch (err) {
@@ -138,4 +138,7 @@ const ContactPage = () => {
 };
 
 export default ContactPage;
+
+
+
 

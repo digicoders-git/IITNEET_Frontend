@@ -17,7 +17,7 @@ const TutorProfile = () => {
     const [photoUrl, setPhotoUrl] = useState('');
 
     const fetchProfile = () => {
-        axios.get('$env:VITE_API_URL/api/profiles/me', {
+        axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/me`, {
             headers: { Authorization: `Bearer ${user?.token}` }
         }).then(res => {
             const { profile, user: u } = res.data;
@@ -30,7 +30,7 @@ const TutorProfile = () => {
                 phone: u?.phone || '',
                 showPhone: u?.showPhone ?? true,
             });
-            if (profile?.profileImage) setPhotoUrl(`$env:VITE_API_URL${profile.profileImage}`);
+            if (profile?.profileImage) setPhotoUrl(`import.meta.env.VITE_API_URL${profile.profileImage}`);
         }).catch(() => {}).finally(() => setLoading(false));
     };
 
@@ -43,10 +43,10 @@ const TutorProfile = () => {
         const data = new FormData();
         data.append('photo', file);
         try {
-            const res = await axios.post('$env:VITE_API_URL/api/profiles/upload-photo', data, {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/profiles/upload-photo`, data, {
                 headers: { Authorization: `Bearer ${user?.token}`, 'Content-Type': 'multipart/form-data' }
             });
-            setPhotoUrl(`$env:VITE_API_URL${res.data.imageUrl}`);
+            setPhotoUrl(`import.meta.env.VITE_API_URL${res.data.imageUrl}`);
             setMsg('Photo uploaded!');
         } catch {
             setMsg('Photo upload failed');
@@ -67,7 +67,7 @@ const TutorProfile = () => {
         setSaving(true);
         setMsg('');
         try {
-            await axios.put('$env:VITE_API_URL/api/profiles/me', form, {
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/profiles/me`, form, {
                 headers: { Authorization: `Bearer ${user?.token}` }
             });
             setMsg('Profile saved successfully!');
@@ -241,4 +241,7 @@ const TutorProfile = () => {
 };
 
 export default TutorProfile;
+
+
+
 

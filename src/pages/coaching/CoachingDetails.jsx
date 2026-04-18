@@ -14,7 +14,7 @@ const CoachingDetails = () => {
     const [msg, setMsg] = useState('');
 
     useEffect(() => {
-        axios.get('$env:VITE_API_URL/api/profiles/me', {
+        axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/me`, {
             headers: { Authorization: `Bearer ${user?.token}` }
         }).then(res => {
             const { profile, user: u } = res.data;
@@ -40,7 +40,7 @@ const CoachingDetails = () => {
         setSaving(true);
         setMsg('');
         try {
-            await axios.put('$env:VITE_API_URL/api/profiles/me', form, {
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/profiles/me`, form, {
                 headers: { Authorization: `Bearer ${user?.token}` }
             });
             setMsg('Listing saved successfully!');
@@ -146,4 +146,7 @@ const CoachingDetails = () => {
 };
 
 export default CoachingDetails;
+
+
+
 

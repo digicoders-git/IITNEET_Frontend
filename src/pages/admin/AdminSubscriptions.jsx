@@ -100,8 +100,8 @@ const AdminSubscriptions = () => {
         setLoading(true);
         try {
             const [plansRes, subsRes] = await Promise.all([
-                axios.get('$env:VITE_API_URL/api/subscriptions/plans/all', { headers }),
-                axios.get('$env:VITE_API_URL/api/subscriptions/all', { headers }),
+                axios.get(`${import.meta.env.VITE_API_URL}/api/subscriptions/plans/all`, { headers }),
+                axios.get(`${import.meta.env.VITE_API_URL}/api/subscriptions/all`, { headers }),
             ]);
             setPlans(plansRes.data);
             setSubscriptions(subsRes.data);
@@ -115,10 +115,10 @@ const AdminSubscriptions = () => {
         setSaving(true);
         try {
             if (modal === 'create') {
-                const res = await axios.post('$env:VITE_API_URL/api/subscriptions/plans', formData, { headers });
+                const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/subscriptions/plans`, formData, { headers });
                 setPlans(p => [res.data, ...p]);
             } else {
-                const res = await axios.put(`$env:VITE_API_URL/api/subscriptions/plans/${modal._id}`, formData, { headers });
+                const res = await axios.put(`import.meta.env.VITE_API_URL/api/subscriptions/plans/${modal._id}`, formData, { headers });
                 setPlans(p => p.map(x => x._id === modal._id ? res.data : x));
             }
             setModal(null);
@@ -128,7 +128,7 @@ const AdminSubscriptions = () => {
 
     const handleDelete = async (id) => {
         if (!confirm('Delete this plan?')) return;
-        await axios.delete(`$env:VITE_API_URL/api/subscriptions/plans/${id}`, { headers });
+        await axios.delete(`import.meta.env.VITE_API_URL/api/subscriptions/plans/${id}`, { headers });
         setPlans(p => p.filter(x => x._id !== id));
     };
 
@@ -290,4 +290,7 @@ const AdminSubscriptions = () => {
 };
 
 export default AdminSubscriptions;
+
+
+
 

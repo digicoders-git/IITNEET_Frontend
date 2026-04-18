@@ -62,7 +62,7 @@ const CoachingListing = () => {
         try {
             const params = { page: p, limit: 12, ...f };
             Object.keys(params).forEach(k => !params[k] && delete params[k]);
-            const res = await axios.get('$env:VITE_API_URL/api/profiles/coachings', { params });
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/coachings`, { params });
             setCoachings(res.data.coachings);
             setTotal(res.data.total);
             setPages(res.data.pages);
@@ -202,4 +202,7 @@ const CoachingListing = () => {
 };
 
 export default CoachingListing;
+
+
+
 

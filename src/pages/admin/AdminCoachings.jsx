@@ -10,7 +10,7 @@ const AdminCoachings = () => {
     const [search, setSearch] = useState('');
 
     useEffect(() => {
-        axios.get('$env:VITE_API_URL/api/users', {
+        axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
             headers: { Authorization: `Bearer ${user?.token}` }
         }).then(res => {
             setCoachings(res.data.filter(u => u.role === 'coaching'));
@@ -19,7 +19,7 @@ const AdminCoachings = () => {
 
     const toggleApproval = async (id, current) => {
         try {
-            await axios.put(`$env:VITE_API_URL/api/users/${id}/approve`,
+            await axios.put(`import.meta.env.VITE_API_URL/api/users/${id}/approve`,
                 { isApproved: !current },
                 { headers: { Authorization: `Bearer ${user?.token}` } }
             );
@@ -109,4 +109,7 @@ const AdminCoachings = () => {
 };
 
 export default AdminCoachings;
+
+
+
 

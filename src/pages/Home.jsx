@@ -21,8 +21,8 @@ const Home = () => {
     const [loadingFeatured, setLoadingFeatured] = useState(true);
 
     useEffect(() => {
-        axios.get('$env:VITE_API_URL/api/profiles/featured')
-            .then(res => setFeatured(res.data))
+        axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/featured`)
+            .then(res => setFeatured(Array.isArray(res.data) ? res.data : []))
             .catch(() => {})
             .finally(() => setLoadingFeatured(false));
     }, []);
@@ -222,7 +222,7 @@ const Home = () => {
                                 <div className="relative h-48 overflow-hidden bg-slate-200">
                                     <img
                                         src={profile?.profileImage
-                                            ? `$env:VITE_API_URL${profile.profileImage}`
+                                            ? `${import.meta.env.VITE_API_URL}${profile.profileImage}`
                                             : `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.user?.name)}&size=300&background=e0e7ff&color=3730a3&bold=true`}
                                         alt={profile.user?.name}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -410,4 +410,5 @@ const Home = () => {
 };
 
 export default Home;
+
 

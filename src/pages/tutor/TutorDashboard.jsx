@@ -11,13 +11,13 @@ const TutorDashboard = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get('$env:VITE_API_URL/api/profiles/my-stats', {
+        axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/my-stats`, {
             headers: { Authorization: `Bearer ${user?.token}` }
         }).then(res => setStats(res.data))
           .catch(() => {})
           .finally(() => setLoading(false));
 
-        axios.get(`$env:VITE_API_URL/api/reviews/${user?._id}`)
+        axios.get(`import.meta.env.VITE_API_URL/api/reviews/${user?._id}`)
             .then(res => setReviews(res.data))
             .catch(() => {});
     }, [user]);
@@ -193,4 +193,7 @@ const TutorDashboard = () => {
 };
 
 export default TutorDashboard;
+
+
+
 

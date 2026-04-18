@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             const parsedUser = JSON.parse(storedUser);
-            axios.get('$env:VITE_API_URL/api/auth/me', {
+            axios.get(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
                 headers: { Authorization: `Bearer ${parsedUser.token}` }
             }).then(res => {
                 setUser({ ...parsedUser, ...res.data });
@@ -41,4 +41,7 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
+
+
 

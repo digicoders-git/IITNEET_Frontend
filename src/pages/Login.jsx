@@ -20,7 +20,7 @@ const Login = () => {
         setError('');
         setLoading(true);
         try {
-            const res = await axios.post('$env:VITE_API_URL/api/auth/login', { email, password });
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, { email, password });
             login(res.data);
             const role = res.data.role;
             if (role === 'admin') navigate('/admin');
@@ -131,4 +131,7 @@ const Login = () => {
 };
 
 export default Login;
+
+
+
 

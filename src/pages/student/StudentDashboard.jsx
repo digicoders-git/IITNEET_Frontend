@@ -17,13 +17,13 @@ const StudentDashboard = () => {
 
     useEffect(() => {
         // Featured tutors
-        axios.get('$env:VITE_API_URL/api/profiles/featured')
+        axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/featured`)
             .then(res => setFeatured(res.data))
             .catch(() => {})
             .finally(() => setLoadingFeatured(false));
 
         // Unlocked contacts
-        axios.get('$env:VITE_API_URL/api/payment/unlocked', {
+        axios.get(`${import.meta.env.VITE_API_URL}/api/payment/unlocked`, {
             headers: { Authorization: `Bearer ${user?.token}` }
         }).then(res => setUnlocked(res.data))
           .catch(() => {})
@@ -173,7 +173,7 @@ const StudentDashboard = () => {
                                 className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all group overflow-hidden block">
                                 <div className="bg-gradient-to-r from-blue-900 to-indigo-900 p-5 flex items-center gap-3">
                                     <img
-                                        src={profile?.profileImage ? `$env:VITE_API_URL${profile.profileImage}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.user?.name)}&size=60&background=e0e7ff&color=3730a3&bold=true&rounded=true`}
+                                        src={profile?.profileImage ? `import.meta.env.VITE_API_URL${profile.profileImage}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.user?.name)}&size=60&background=e0e7ff&color=3730a3&bold=true&rounded=true`}
                                         alt={profile.user?.name} className="w-12 h-12 rounded-xl border-2 border-white/20 object-cover"
                                     />
                                     <div>
@@ -210,4 +210,7 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
+
+
+
 

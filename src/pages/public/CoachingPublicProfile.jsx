@@ -11,7 +11,7 @@ const CoachingPublicProfile = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get(`$env:VITE_API_URL/api/profiles/coaching/${userId}`)
+        axios.get(`import.meta.env.VITE_API_URL/api/profiles/coaching/${userId}`)
             .then(res => { setData(res.data); setLoading(false); })
             .catch(() => setLoading(false));
     }, [userId]);
@@ -169,4 +169,6 @@ const CoachingPublicProfile = () => {
 };
 
 export default CoachingPublicProfile;
+
+
 

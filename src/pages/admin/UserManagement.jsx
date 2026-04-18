@@ -11,7 +11,7 @@ const UserManagement = () => {
     const { user: currentUser } = useAuth();
 
     useEffect(() => {
-        axios.get('$env:VITE_API_URL/api/users', {
+        axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
             headers: { Authorization: `Bearer ${currentUser?.token}` }
         }).then(res => {
             setUsers(res.data);
@@ -22,7 +22,7 @@ const UserManagement = () => {
 
     const toggleApproval = async (id, currentStatus) => {
         try {
-            await axios.put(`$env:VITE_API_URL/api/users/${id}/approve`,
+            await axios.put(`import.meta.env.VITE_API_URL/api/users/${id}/approve`,
                 { isApproved: !currentStatus },
                 { headers: { Authorization: `Bearer ${currentUser?.token}` } }
             );
@@ -154,4 +154,7 @@ const UserManagement = () => {
 };
 
 export default UserManagement;
+
+
+
 

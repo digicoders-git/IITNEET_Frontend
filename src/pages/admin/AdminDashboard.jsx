@@ -11,7 +11,7 @@ const AdminDashboard = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get('$env:VITE_API_URL/api/users', {
+        axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
             headers: { Authorization: `Bearer ${user?.token}` }
         }).then(res => {
             const all = res.data;
@@ -114,4 +114,7 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
+
+
 

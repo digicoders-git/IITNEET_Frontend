@@ -14,10 +14,10 @@ const TutorSubscription = () => {
 
     useEffect(() => {
         Promise.all([
-            axios.get('$env:VITE_API_URL/api/subscriptions/plans', {
+            axios.get(`${import.meta.env.VITE_API_URL}/api/subscriptions/plans`, {
                 headers: { Authorization: `Bearer ${token}` }
             }),
-            axios.get('$env:VITE_API_URL/api/subscriptions/mine', {
+            axios.get(`${import.meta.env.VITE_API_URL}/api/subscriptions/mine`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
         ]).then(([plansRes, subRes]) => {
@@ -30,7 +30,7 @@ const TutorSubscription = () => {
         setPurchasing(plan._id);
         try {
             // Create Razorpay order
-            const orderRes = await axios.post('$env:VITE_API_URL/api/subscriptions/create-order',
+            const orderRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/subscriptions/create-order`,
                 { planId: plan._id },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -46,7 +46,7 @@ const TutorSubscription = () => {
                 order_id: orderId,
                 handler: async (response) => {
                     try {
-                        await axios.post('$env:VITE_API_URL/api/subscriptions/verify-purchase',
+                        await axios.post(`${import.meta.env.VITE_API_URL}/api/subscriptions/verify-purchase`,
                             {
                                 razorpay_order_id: response.razorpay_order_id,
                                 razorpay_payment_id: response.razorpay_payment_id,
@@ -56,7 +56,7 @@ const TutorSubscription = () => {
                             { headers: { Authorization: `Bearer ${token}` } }
                         );
                         // Refresh subscription
-                        const subRes = await axios.get('$env:VITE_API_URL/api/subscriptions/mine', {
+                        const subRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/subscriptions/mine`, {
                             headers: { Authorization: `Bearer ${token}` }
                         });
                         setCurrentSub(subRes.data);
@@ -181,4 +181,7 @@ const TutorSubscription = () => {
 };
 
 export default TutorSubscription;
+
+
+
 
