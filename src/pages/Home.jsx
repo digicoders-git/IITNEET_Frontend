@@ -205,7 +205,7 @@ const Home = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {loadingFeatured ? (
-                            [...Array(6)].map((_, i) => (
+                            [...Array(3)].map((_, i) => (
                                 <div key={i} className="bg-white rounded-2xl border border-slate-100 overflow-hidden animate-pulse">
                                     <div className="h-24 bg-slate-200"></div>
                                     <div className="p-5 space-y-3">
@@ -214,7 +214,7 @@ const Home = () => {
                                     </div>
                                 </div>
                             ))
-                        ) : featured.map(profile => (
+                        ) : featured.slice(0, 3).map(profile => (
                             <Link key={profile._id} to={`/tutors/${profile.user._id}`}
                                 className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-slate-100 flex flex-col">
 

@@ -19,7 +19,7 @@ const TutorCard = ({ profile }) => (
         className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all group overflow-hidden block">
         <div className="bg-gradient-to-r from-blue-900 to-indigo-900 p-5 flex items-center gap-4">
             <img
-                src={profile?.profileImage ? `import.meta.env.VITE_API_URL${profile.profileImage}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.user.name)}&size=80&background=e0e7ff&color=3730a3&bold=true&rounded=true`}
+                src={profile?.profileImage ? `${import.meta.env.VITE_API_URL}${profile.profileImage}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.user.name)}&size=80&background=e0e7ff&color=3730a3&bold=true&rounded=true`}
                 alt={profile.user.name}
                 className="w-14 h-14 rounded-xl border-2 border-white/20 shadow-lg shrink-0"
             />

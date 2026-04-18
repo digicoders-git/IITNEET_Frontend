@@ -17,8 +17,8 @@ const TutorDashboard = () => {
           .catch(() => {})
           .finally(() => setLoading(false));
 
-        axios.get(`import.meta.env.VITE_API_URL/api/reviews/${user?._id}`)
-            .then(res => setReviews(res.data))
+        axios.get(`${import.meta.env.VITE_API_URL}/api/reviews/${user?._id}`)
+            .then(res => setReviews(Array.isArray(res.data) ? res.data : []))
             .catch(() => {});
     }, [user]);
 

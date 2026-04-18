@@ -22,7 +22,7 @@ const UserManagement = () => {
 
     const toggleApproval = async (id, currentStatus) => {
         try {
-            await axios.put(`import.meta.env.VITE_API_URL/api/users/${id}/approve`,
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/users/${id}/approve`,
                 { isApproved: !currentStatus },
                 { headers: { Authorization: `Bearer ${currentUser?.token}` } }
             );
@@ -154,6 +154,7 @@ const UserManagement = () => {
 };
 
 export default UserManagement;
+
 
 
 

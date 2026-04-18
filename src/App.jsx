@@ -14,6 +14,7 @@ import TutorProfile from './pages/tutor/TutorProfile';
 import TutorSubscription from './pages/tutor/TutorSubscription';
 import CoachingDashboard from './pages/coaching/CoachingDashboard';
 import CoachingDetails from './pages/coaching/CoachingDetails';
+import CoachingSubscription from './pages/coaching/CoachingSubscription';
 import StudentDashboard from './pages/student/StudentDashboard';
 import StudentProfile from './pages/student/StudentProfile';
 import DashboardLayout from './components/DashboardLayout';
@@ -89,6 +90,7 @@ const AppContent = () => {
                             <Routes>
                                 <Route path="/" element={<CoachingDashboard />} />
                                 <Route path="/details" element={<CoachingDetails />} />
+                                <Route path="/subscription" element={<CoachingSubscription />} />
                             </Routes>
                         </DashboardLayout>
                     </ProtectedRoute>

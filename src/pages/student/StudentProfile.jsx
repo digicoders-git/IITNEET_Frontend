@@ -173,7 +173,7 @@ const StudentProfile = () => {
                                                 className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all group overflow-hidden flex">
                                                 <div className="bg-gradient-to-b from-blue-900 to-indigo-900 p-4 flex items-center justify-center w-20 shrink-0">
                                                     <img
-                                                        src={profile?.profileImage ? `import.meta.env.VITE_API_URL${profile.profileImage}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.user?.name)}&size=60&background=e0e7ff&color=3730a3&bold=true&rounded=true`}
+                                                        src={profile?.profileImage ? `${import.meta.env.VITE_API_URL}${profile.profileImage}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.user?.name)}&size=60&background=e0e7ff&color=3730a3&bold=true&rounded=true`}
                                                         alt={profile.user?.name} className="w-12 h-12 rounded-xl border-2 border-white/20 object-cover"
                                                     />
                                                 </div>
@@ -345,6 +345,7 @@ const StudentProfile = () => {
 };
 
 export default StudentProfile;
+
 
 
 

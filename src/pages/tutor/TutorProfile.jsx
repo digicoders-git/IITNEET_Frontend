@@ -30,7 +30,7 @@ const TutorProfile = () => {
                 phone: u?.phone || '',
                 showPhone: u?.showPhone ?? true,
             });
-            if (profile?.profileImage) setPhotoUrl(`import.meta.env.VITE_API_URL${profile.profileImage}`);
+            if (profile?.profileImage) setPhotoUrl(`${import.meta.env.VITE_API_URL}${profile.profileImage}`);
         }).catch(() => {}).finally(() => setLoading(false));
     };
 
@@ -46,7 +46,7 @@ const TutorProfile = () => {
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/profiles/upload-photo`, data, {
                 headers: { Authorization: `Bearer ${user?.token}`, 'Content-Type': 'multipart/form-data' }
             });
-            setPhotoUrl(`import.meta.env.VITE_API_URL${res.data.imageUrl}`);
+            setPhotoUrl(`${import.meta.env.VITE_API_URL}${res.data.imageUrl}`);
             setMsg('Photo uploaded!');
         } catch {
             setMsg('Photo upload failed');
@@ -241,6 +241,7 @@ const TutorProfile = () => {
 };
 
 export default TutorProfile;
+
 
 
 

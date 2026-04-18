@@ -19,7 +19,7 @@ const AdminCoachings = () => {
 
     const toggleApproval = async (id, current) => {
         try {
-            await axios.put(`import.meta.env.VITE_API_URL/api/users/${id}/approve`,
+            await axios.put(`${import.meta.env.VITE_API_URL}/api/users/${id}/approve`,
                 { isApproved: !current },
                 { headers: { Authorization: `Bearer ${user?.token}` } }
             );
@@ -109,6 +109,7 @@ const AdminCoachings = () => {
 };
 
 export default AdminCoachings;
+
 
 
 

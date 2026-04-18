@@ -32,7 +32,7 @@ const TutorPublicProfile = () => {
     const token = user?.token;
 
     useEffect(() => {
-        axios.get(`import.meta.env.VITE_API_URL/api/profiles/tutor/${userId}?t=${Date.now()}`, {
+        axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/tutor/${userId}?t=${Date.now()}`, {
             headers: token ? { Authorization: `Bearer ${token}` } : {}
         }).then(res => { setData(res.data); setLoading(false); })
           .catch(() => setLoading(false));
@@ -98,7 +98,7 @@ const TutorPublicProfile = () => {
         setSubmitting(true);
         setReviewMsg('');
         try {
-            const res = await axios.post(`import.meta.env.VITE_API_URL/api/reviews/${userId}`, reviewForm,
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/reviews/${userId}`, reviewForm,
                 { headers: { Authorization: `Bearer ${token}` } });
             setData(d => ({ ...d, reviews: [res.data, ...d.reviews] }));
             setReviewForm({ rating: 5, comment: '' });
@@ -125,7 +125,7 @@ const TutorPublicProfile = () => {
 
     const { user: tutor, profile, reviews, avgRating, contactUnlocked } = data;
     const avatarUrl = profile?.profileImage
-        ? `import.meta.env.VITE_API_URL${profile.profileImage}`
+        ? `${import.meta.env.VITE_API_URL}${profile.profileImage}`
         : `https://ui-avatars.com/api/?name=${encodeURIComponent(tutor.name)}&size=100&background=e0e7ff&color=3730a3&bold=true&rounded=true`;
 
     return (
@@ -370,6 +370,8 @@ const TutorPublicProfile = () => {
 };
 
 export default TutorPublicProfile;
+
+
 
 
 

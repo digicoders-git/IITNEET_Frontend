@@ -30,6 +30,7 @@ const DashboardLayout = ({ children, role }) => {
         coaching: [
             { name: 'Dashboard', path: '/coaching', icon: LayoutDashboard, end: true },
             { name: 'Listing Details', path: '/coaching/details', icon: Building2 },
+            { name: 'Subscription', path: '/coaching/subscription', icon: CreditCard },
         ],
         student: [
             { name: 'Find Tutors', path: '/student', icon: GraduationCap, end: true },

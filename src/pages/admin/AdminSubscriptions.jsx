@@ -8,11 +8,12 @@ const FEATURES_PLACEHOLDER = 'Priority listing\nVerified badge\nContact unlocks'
 const PlanModal = ({ plan, onClose, onSave }) => {
     const [form, setForm] = useState({
         name: plan?.name || '',
-        price: plan?.price || '',
-        duration: plan?.duration || 30,
+        price: plan?.price ?? 0,
+        duration: plan?.duration || 365,
         forRole: plan?.forRole || 'both',
         features: plan?.features?.join('\n') || '',
         isActive: plan?.isActive ?? true,
+        isDefault: plan?.isDefault ?? false,
     });
 
     const handleSave = () => {
@@ -73,6 +74,13 @@ const PlanModal = ({ plan, onClose, onSave }) => {
                         </button>
                         <span className="text-sm font-semibold text-slate-700">{form.isActive ? 'Active' : 'Inactive'}</span>
                     </div>
+                    <div className="flex items-center gap-3">
+                        <button type="button" onClick={() => setForm(f => ({ ...f, isDefault: !f.isDefault }))}
+                            className={`w-10 h-6 rounded-full transition-all relative ${form.isDefault ? 'bg-indigo-500' : 'bg-slate-300'}`}>
+                            <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-all ${form.isDefault ? 'left-5' : 'left-1'}`}></div>
+                        </button>
+                        <span className="text-sm font-semibold text-slate-700">{form.isDefault ? '⭐ Default Plan (auto-assigned on signup)' : 'Not Default'}</span>
+                    </div>
                 </div>
                 <div className="px-6 py-4 border-t border-slate-100 flex gap-3 justify-end">
                     <button onClick={onClose} className="btn btn-outline px-5">Cancel</button>
@@ -118,7 +126,7 @@ const AdminSubscriptions = () => {
                 const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/subscriptions/plans`, formData, { headers });
                 setPlans(p => [res.data, ...p]);
             } else {
-                const res = await axios.put(`import.meta.env.VITE_API_URL/api/subscriptions/plans/${modal._id}`, formData, { headers });
+                const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/subscriptions/plans/${modal._id}`, formData, { headers });
                 setPlans(p => p.map(x => x._id === modal._id ? res.data : x));
             }
             setModal(null);
@@ -128,7 +136,7 @@ const AdminSubscriptions = () => {
 
     const handleDelete = async (id) => {
         if (!confirm('Delete this plan?')) return;
-        await axios.delete(`import.meta.env.VITE_API_URL/api/subscriptions/plans/${id}`, { headers });
+        await axios.delete(`${import.meta.env.VITE_API_URL}/api/subscriptions/plans/${id}`, { headers });
         setPlans(p => p.filter(x => x._id !== id));
     };
 
@@ -290,6 +298,8 @@ const AdminSubscriptions = () => {
 };
 
 export default AdminSubscriptions;
+
+
 
 
 
