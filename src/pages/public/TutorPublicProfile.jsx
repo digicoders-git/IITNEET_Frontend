@@ -201,6 +201,8 @@ const TutorPublicProfile = () => {
                                         <p className="text-slate-600 leading-relaxed">{profile.bio}</p>
                                     </div>
                                 )}
+
+                                {/* Stats Grid */}
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                     {profile?.experience && (
                                         <div className="bg-indigo-50 rounded-xl p-4 text-center">
@@ -229,6 +231,93 @@ const TutorPublicProfile = () => {
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Details */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    {profile?.teachingClass && (
+                                        <div className="bg-slate-50 rounded-xl p-4">
+                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Teaching Class</p>
+                                            <p className="font-bold text-slate-800">{profile.teachingClass}</p>
+                                        </div>
+                                    )}
+                                    {profile?.qualification && (
+                                        <div className="bg-slate-50 rounded-xl p-4">
+                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Qualification</p>
+                                            <p className="font-bold text-slate-800">{profile.qualification}</p>
+                                        </div>
+                                    )}
+                                    {profile?.availability && (
+                                        <div className="bg-slate-50 rounded-xl p-4">
+                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Mode</p>
+                                            <p className="font-bold text-slate-800 capitalize">{profile.availability === 'both' ? 'Online & Offline' : profile.availability}</p>
+                                        </div>
+                                    )}
+                                    {profile?.feesType && (
+                                        <div className="bg-slate-50 rounded-xl p-4">
+                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Schedule</p>
+                                            <p className="font-bold text-slate-800">{profile.feesType === '3days' ? '3 days/week' : profile.feesType === '6days' ? '6 days/week' : 'To be discussed'}</p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Expert Subject */}
+                                {profile?.competitiveExpert && profile?.expertSubject && (
+                                    <div className="bg-amber-50 border border-amber-100 rounded-xl p-4">
+                                        <p className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-1">Competitive Exam Expert</p>
+                                        <p className="font-bold text-amber-900">{profile.expertSubject}</p>
+                                    </div>
+                                )}
+
+                                {/* Schedule Table */}
+                                {profile?.schedule && Object.keys(profile.schedule).length > 0 && (
+                                    <div>
+                                        <h4 className="font-black text-slate-900 mb-3">Weekly Schedule</h4>
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full text-sm border-collapse">
+                                                <thead>
+                                                    <tr className="bg-slate-50">
+                                                        <th className="border border-slate-200 px-3 py-2 text-left font-bold text-slate-600">Day</th>
+                                                        <th className="border border-slate-200 px-3 py-2 text-left font-bold text-slate-600">Status</th>
+                                                        <th className="border border-slate-200 px-3 py-2 text-left font-bold text-slate-600">Timing</th>
+                                                        <th className="border border-slate-200 px-3 py-2 text-left font-bold text-slate-600">From</th>
+                                                        <th className="border border-slate-200 px-3 py-2 text-left font-bold text-slate-600">To</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {Object.entries(profile.schedule).map(([day, s]) => (
+                                                        <tr key={day} className="hover:bg-slate-50/50">
+                                                            <td className="border border-slate-200 px-3 py-2 font-semibold text-slate-700">{day}</td>
+                                                            <td className="border border-slate-200 px-3 py-2">
+                                                                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${s.available ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
+                                                                    {s.available ? 'Available' : 'Not Available'}
+                                                                </span>
+                                                            </td>
+                                                            <td className="border border-slate-200 px-3 py-2 text-slate-600">{s.available ? s.timing : '—'}</td>
+                                                            <td className="border border-slate-200 px-3 py-2 text-slate-600">{s.available && s.from ? s.from : '—'}</td>
+                                                            <td className="border border-slate-200 px-3 py-2 text-slate-600">{s.available && s.to ? s.to : '—'}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* YouTube */}
+                                {profile?.youtubeChannel && (
+                                    <div className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-xl p-4">
+                                        <div className="w-9 h-9 bg-red-600 rounded-lg flex items-center justify-center shrink-0">
+                                            <span className="text-white font-black text-xs">YT</span>
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-bold text-red-600 uppercase tracking-widest">YouTube Channel</p>
+                                            <a href={profile.youtubeChannel} target="_blank" rel="noopener noreferrer"
+                                                className="font-bold text-slate-800 text-sm hover:text-red-600 transition-colors">
+                                                {profile.youtubeChannel}
+                                            </a>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
 

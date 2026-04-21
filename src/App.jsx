@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Home from './pages/Home';
@@ -35,6 +35,12 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return children;
 };
 
+const ScrollToTop = () => {
+    const { pathname } = useLocation();
+    useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [pathname]);
+    return null;
+};
+
 const AppContent = () => {
     const location = useLocation();
     const { user } = useAuth();
@@ -43,6 +49,7 @@ const AppContent = () => {
 
     return (
         <>
+            <ScrollToTop />
             {!isDashboard && <FloatingCTA />}
             <Routes>
                 {/* Public Routes */}

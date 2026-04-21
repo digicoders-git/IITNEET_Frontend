@@ -83,6 +83,23 @@ const CoachingDetails = () => {
                     </h4>
                     <div className="grid md:grid-cols-2 gap-5">
                         <div>
+                            <label className="text-sm font-bold text-slate-700 mb-1.5 block">Institute Category</label>
+                            <select className="input-field"
+                                value={form.courses[0] || ''}
+                                onChange={e => {
+                                    const val = e.target.value;
+                                    setForm(f => ({ ...f, courses: val ? [val, ...f.courses.filter((_, i) => i !== 0)] : f.courses.slice(1) }));
+                                }}>
+                                <option value="">Select Category</option>
+                                <option value="IIT/NEET & Academic">IIT/NEET &amp; Academic</option>
+                                <option value="IIT & NEET">IIT &amp; NEET</option>
+                                <option value="IIT-JEE">IIT-JEE</option>
+                                <option value="NEET">NEET</option>
+                                <option value="Academic">Academic (KG-XII)</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
                             <label className="text-sm font-bold text-slate-700 mb-1.5 block">Location</label>
                             <div className="relative">
                                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
