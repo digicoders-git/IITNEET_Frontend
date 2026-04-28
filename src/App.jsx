@@ -9,12 +9,14 @@ import UserManagement from './pages/admin/UserManagement';
 import AdminCoachings from './pages/admin/AdminCoachings';
 import AdminPayments from './pages/admin/AdminPayments';
 import AdminSubscriptions from './pages/admin/AdminSubscriptions';
+import AdminAds from './pages/admin/AdminAds';
 import TutorDashboard from './pages/tutor/TutorDashboard';
 import TutorProfile from './pages/tutor/TutorProfile';
 import TutorSubscription from './pages/tutor/TutorSubscription';
 import CoachingDashboard from './pages/coaching/CoachingDashboard';
 import CoachingDetails from './pages/coaching/CoachingDetails';
 import CoachingSubscription from './pages/coaching/CoachingSubscription';
+import CoachingAds from './pages/coaching/CoachingAds';
 import StudentDashboard from './pages/student/StudentDashboard';
 import StudentProfile from './pages/student/StudentProfile';
 import DashboardLayout from './components/DashboardLayout';
@@ -23,6 +25,7 @@ import TutorPublicProfile from './pages/public/TutorPublicProfile';
 import CoachingListing from './pages/public/CoachingListing';
 import CoachingPublicProfile from './pages/public/CoachingPublicProfile';
 import ContactPage from './pages/public/ContactPage';
+import AdvertisingPage from './pages/public/AdvertisingPage';
 import FloatingCTA from './components/FloatingCTA';
 
 
@@ -61,6 +64,7 @@ const AppContent = () => {
                 <Route path="/coachings" element={<CoachingListing />} />
                 <Route path="/coachings/:userId" element={<CoachingPublicProfile />} />
                 <Route path="/contact" element={<ContactPage />} />
+                <Route path="/advertising" element={<AdvertisingPage />} />
 
                 {/* Admin Routes */}
                 <Route path="/admin/*" element={
@@ -72,6 +76,7 @@ const AppContent = () => {
                                 <Route path="/coachings" element={<AdminCoachings />} />
                                 <Route path="/payments" element={<AdminPayments />} />
                                 <Route path="/subscriptions" element={<AdminSubscriptions />} />
+                                <Route path="/ads" element={<AdminAds />} />
                             </Routes>
                         </DashboardLayout>
                     </ProtectedRoute>
@@ -98,6 +103,7 @@ const AppContent = () => {
                                 <Route path="/" element={<CoachingDashboard />} />
                                 <Route path="/details" element={<CoachingDetails />} />
                                 <Route path="/subscription" element={<CoachingSubscription />} />
+                                <Route path="/ads" element={<CoachingAds />} />
                             </Routes>
                         </DashboardLayout>
                     </ProtectedRoute>

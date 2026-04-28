@@ -13,6 +13,7 @@ const Navbar = () => {
         { to: '/register?role=tutor', label: 'Become a Tutor' },
         { to: '/tutors', label: 'Tutors' },
         { to: '/coachings', label: 'Coaching Institutes' },
+        { to: '/advertising', label: 'Advertising' },
         { to: '/contact', label: 'Help' },
     ];
 
@@ -23,14 +24,18 @@ const Navbar = () => {
             <div className="page-container h-16 flex items-center justify-between">
                 {/* Logo — text only */}
                 <Link to="/" className="flex items-center gap-2">
-                    <span className="text-white font-bold text-xl tracking-tight">IIT<span className="text-amber-400">-NEET</span>.com</span>
+                    <img
+                        src="/logo.png"
+                        alt="IIT-NEET.com Logo"
+                        className="h-8 w-auto brightness-0 invert"
+                    />
                 </Link>
 
                 {/* Desktop Links */}
                 <div className="hidden md:flex items-center gap-1 text-sm font-semibold">
                     {navLinks.map(link => (
                         <Link key={link.to} to={link.to}
-                            className={`px-3 py-2 transition-colors ${isActive(link.to) ? 'text-amber-400 border-b-2 border-amber-400' : 'text-blue-100 hover:text-amber-400'}`}>
+                            className={`px-3 py-2 transition-colors ${isActive(link.to) ? 'text-amber-400 border-b-2 border-amber-400' : 'text-white hover:text-amber-400'}`}>
                             {link.label}
                         </Link>
                     ))}
@@ -45,19 +50,19 @@ const Navbar = () => {
                                 My Dashboard
                             </Link>
                             <button onClick={logout}
-                                className="text-sm font-semibold text-blue-200 hover:text-amber-400 transition-colors">
+                                className="text-sm font-semibold text-white hover:text-amber-400 transition-colors">
                                 Logout
                             </button>
                         </div>
                     ) : (
                         <>
                             <Link to="/login"
-                                className="text-sm font-semibold px-4 py-2 text-blue-100 hover:text-amber-400 transition-colors">
+                                className="text-sm font-semibold px-4 py-2 text-white hover:text-amber-400 transition-colors">
                                 Login
                             </Link>
                             <Link to="/register"
                                 className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 font-bold text-sm transition-all">
-                                Register Free
+                                Register
                             </Link>
                         </>
                     )}

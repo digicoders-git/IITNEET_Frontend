@@ -44,6 +44,11 @@ const Register = () => {
                 <div className="w-full max-w-md">
                     <div className="bg-white border-2 border-gray-200 p-8">
                         <div className="mb-8 text-center">
+                            <img 
+                                src="/logo.png" 
+                                alt="IIT-NEET.com Logo" 
+                                className="h-12 w-auto mx-auto mb-6"
+                            />
                             <h1 className="text-3xl font-bold text-blue-900 mb-2">Create Account</h1>
                             <p className="text-gray-500">Join thousands of students and educators</p>
                         </div>

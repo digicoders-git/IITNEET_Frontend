@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Users, CreditCard, Bell, LogOut, GraduationCap, Building2, Menu } from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, Bell, LogOut, GraduationCap, Building2, Menu, Megaphone } from 'lucide-react';
 
 const DashboardLayout = ({ children, role }) => {
     const { logout, user } = useAuth();
@@ -18,6 +18,7 @@ const DashboardLayout = ({ children, role }) => {
             { name: 'Coachings', path: '/admin/coachings', icon: Building2 },
             { name: 'Subscriptions', path: '/admin/subscriptions', icon: CreditCard },
             { name: 'Payments', path: '/admin/payments', icon: CreditCard },
+            { name: 'Advertisements', path: '/admin/ads', icon: Megaphone },
         ],
         tutor: [
             { name: 'Dashboard', path: '/tutor', icon: LayoutDashboard, end: true },
@@ -27,6 +28,7 @@ const DashboardLayout = ({ children, role }) => {
         coaching: [
             { name: 'Dashboard', path: '/coaching', icon: LayoutDashboard, end: true },
             { name: 'Listing Details', path: '/coaching/details', icon: Building2 },
+            { name: 'Advertisements', path: '/coaching/ads', icon: Megaphone },
             { name: 'Subscription', path: '/coaching/subscription', icon: CreditCard },
         ],
         student: [
@@ -42,9 +44,17 @@ const DashboardLayout = ({ children, role }) => {
         <div className="flex flex-col h-full">
             <div className="p-5 flex items-center gap-3 border-b-2 border-blue-800 shrink-0 bg-blue-900">
                 {collapsed ? (
-                    <span className="text-amber-400 font-bold text-lg">IN</span>
+                    <img 
+                        src="/logo.png" 
+                        alt="Logo" 
+                        className="h-6 w-auto brightness-0 invert"
+                    />
                 ) : (
-                    <span className="text-white font-bold text-lg">IIT<span className="text-amber-400">-NEET</span>.com</span>
+                    <img 
+                        src="/logo.png" 
+                        alt="IIT-NEET.com Logo" 
+                        className="h-8 w-auto brightness-0 invert"
+                    />
                 )}
             </div>
 

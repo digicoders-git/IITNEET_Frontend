@@ -4,7 +4,10 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { MapPin, Clock, Star, IndianRupee, GraduationCap, Phone, Lock, ArrowLeft, Send, CheckCircle2, MessageSquare, Shield } from 'lucide-react';
+import { 
+    MapPin, Clock, Star, IndianRupee, GraduationCap, Phone, Lock, 
+    ArrowLeft, Send, CheckCircle2, MessageSquare, Shield, Zap, Youtube, ExternalLink, Loader2 
+} from 'lucide-react';
 
 const StarRating = ({ value, onChange }) => (
     <div className="flex gap-1">
@@ -42,426 +45,263 @@ const TutorPublicProfile = () => {
         if (!user) return navigate('/login');
         setUnlocking(true);
         try {
-            // Step 1: Create Razorpay order
-            const orderRes = await axios.post(
-                `${import.meta.env.VITE_API_URL}/api/payment/create-order`,
-                { tutorId: userId },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
+            const orderRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/payment/create-order`, { tutorId: userId }, { headers: { Authorization: `Bearer ${token}` } });
             const { orderId, amount, currency, keyId, tutorName } = orderRes.data;
-
-            // Step 2: Open Razorpay checkout
             const options = {
-                key: keyId,
-                amount,
-                currency,
-                name: 'IIT-NEET Platform',
-                description: `Unlock contact of ${tutorName}`,
-                order_id: orderId,
+                key: keyId, amount, currency, name: 'IIT-NEET Platform', description: `Unlock contact of ${tutorName}`, order_id: orderId,
                 handler: async (response) => {
                     try {
-                        // Step 3: Verify payment & unlock
-                        const verifyRes = await axios.post(
-                            `${import.meta.env.VITE_API_URL}/api/payment/verify-unlock`,
-                            {
-                                razorpay_order_id: response.razorpay_order_id,
-                                razorpay_payment_id: response.razorpay_payment_id,
-                                razorpay_signature: response.razorpay_signature,
-                                tutorId: userId
-                            },
-                            { headers: { Authorization: `Bearer ${token}` } }
-                        );
+                        const verifyRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/payment/verify-unlock`, {
+                            razorpay_order_id: response.razorpay_order_id, razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature, tutorId: userId
+                        }, { headers: { Authorization: `Bearer ${token}` } });
                         setData(d => ({ ...d, contactUnlocked: true, user: { ...d.user, phone: verifyRes.data.phone } }));
-                    } catch (err) {
-                        alert(err.response?.data?.message || 'Payment verification failed');
-                    } finally {
-                        setUnlocking(false);
-                    }
+                    } catch (err) { alert('Payment verification failed'); } finally { setUnlocking(false); }
                 },
-                prefill: { name: user.name, email: user.email },
-                theme: { color: '#4f46e5' },
+                prefill: { name: user.name, email: user.email }, theme: { color: '#1e3a8a' },
                 modal: { ondismiss: () => setUnlocking(false) }
             };
-
             const rzp = new window.Razorpay(options);
             rzp.open();
-        } catch (err) {
-            alert(err.response?.data?.message || 'Failed to initiate payment');
-            setUnlocking(false);
-        }
+        } catch (err) { alert('Failed to initiate payment'); setUnlocking(false); }
     };
 
     const handleReview = async (e) => {
         e.preventDefault();
         if (!user) return navigate('/login');
         setSubmitting(true);
-        setReviewMsg('');
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/reviews/${userId}`, reviewForm,
-                { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/reviews/${userId}`, reviewForm, { headers: { Authorization: `Bearer ${token}` } });
             setData(d => ({ ...d, reviews: [res.data, ...d.reviews] }));
             setReviewForm({ rating: 5, comment: '' });
             setReviewMsg('success');
-        } catch (err) {
-            setReviewMsg(err.response?.data?.message || 'Failed to submit');
-        } finally { setSubmitting(false); }
+        } catch (err) { setReviewMsg(err.response?.data?.message || 'Failed to submit'); } finally { setSubmitting(false); }
     };
 
-    if (loading) return (
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-            <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-    );
-
-    if (!data) return (
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-            <div className="text-center">
-                <p className="text-slate-500 font-medium">Tutor not found.</p>
-                <Link to="/tutors" className="text-indigo-600 font-bold text-sm mt-2 inline-block">← Back to Tutors</Link>
-            </div>
-        </div>
-    );
+    if (loading) return <div className="min-h-screen bg-white flex items-center justify-center"><Loader2 className="w-12 h-12 text-blue-900 animate-spin" /></div>;
+    if (!data) return <div className="min-h-screen bg-white flex items-center justify-center text-center"><div><p className="text-slate-500 font-bold">Tutor not found.</p><Link to="/tutors" className="text-blue-900 underline mt-4 inline-block">Back to search</Link></div></div>;
 
     const { user: tutor, profile, reviews, avgRating, contactUnlocked } = data;
-    const avatarUrl = profile?.profileImage
-        ? `${import.meta.env.VITE_API_URL}${profile.profileImage}`
-        : `https://ui-avatars.com/api/?name=${encodeURIComponent(tutor.name)}&size=100&background=e0e7ff&color=3730a3&bold=true&rounded=true`;
+    const avatarUrl = profile?.profileImage ? `${import.meta.env.VITE_API_URL}${profile.profileImage}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(tutor.name)}&size=300&background=1e3a8a&color=fff&bold=true`;
 
     return (
         <div className="min-h-screen bg-slate-50">
             <Navbar />
 
-            {/* Hero */}
-            <div className="bg-gradient-to-r from-blue-900 to-indigo-900 pt-20">
-                <div className="page-container py-10 max-w-5xl">
-                    <Link to="/tutors" className="inline-flex items-center gap-2 text-blue-300 hover:text-white text-sm font-semibold mb-6 transition-colors">
+            {/* Header / Hero */}
+            <div className="bg-white border-b border-slate-200 pt-24 pb-8 md:pt-32">
+                <div className="page-container">
+                    <Link to="/tutors" className="inline-flex items-center gap-2 text-slate-400 hover:text-blue-900 text-sm font-bold mb-8 transition-colors">
                         <ArrowLeft size={16} /> All Tutors
                     </Link>
-                    <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-                        <img
-                            src={avatarUrl}
-                            alt={tutor.name}
-                            className="w-20 h-20 rounded-2xl border-4 border-white/20 shadow-xl shrink-0 object-cover"
-                        />
-                        <div className="flex-1">
-                            <div className="flex flex-wrap items-center gap-3 mb-2">
-                                <h1 className="text-2xl font-black text-white">{tutor.name}</h1>
-                                {tutor.subscriptionStatus === 'active' && (
-                                    <span className="bg-amber-400 text-amber-900 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">⭐ Featured</span>
-                                )}
+
+                    <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
+                        {/* Profile Photo */}
+                        <div className="relative group shrink-0 mx-auto md:mx-0">
+                            <div className="w-40 h-40 md:w-56 md:h-56 rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
+                                <img src={avatarUrl} alt={tutor.name} className="w-full h-full object-cover" />
                             </div>
-                            <div className="flex flex-wrap gap-4 text-sm text-blue-300">
-                                {profile?.location && <span className="flex items-center gap-1"><MapPin size={13} />{profile.location}</span>}
-                                {profile?.experience && <span className="flex items-center gap-1"><Clock size={13} />{profile.experience} yrs experience</span>}
-                                {avgRating > 0 && (
-                                    <span className="flex items-center gap-1 text-amber-400 font-bold">
-                                        <Star size={13} fill="currentColor" />{avgRating} ({reviews.length} reviews)
-                                    </span>
-                                )}
+                            {tutor.subscriptionStatus === 'active' && (
+                                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-950 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1.5 border-2 border-white">
+                                    <Star size={12} fill="currentColor" /> Featured
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Basic Info */}
+                        <div className="flex-1 text-center md:text-left space-y-4">
+                            <div>
+                                <h1 className="text-3xl md:text-5xl font-black text-slate-900 mb-2">{tutor.name}</h1>
+                                <div className="flex flex-wrap justify-center md:justify-start gap-4 text-slate-500 font-bold text-sm">
+                                    {profile?.location && <span className="flex items-center gap-1.5"><MapPin size={16} className="text-blue-900" />{profile.location}</span>}
+                                    {profile?.experience && <span className="flex items-center gap-1.5"><Clock size={16} className="text-blue-900" />{profile.experience} Yrs Exp</span>}
+                                    {avgRating > 0 && <span className="flex items-center gap-1.5 text-amber-500"><Star size={16} fill="currentColor" />{avgRating} Rating</span>}
+                                </div>
                             </div>
-                            <div className="flex flex-wrap gap-2 mt-3">
+
+                            <div className="flex flex-wrap justify-center md:justify-start gap-2">
                                 {(profile?.subjects || []).map(s => (
-                                    <span key={s} className="bg-white/10 text-white text-xs font-bold px-3 py-1 rounded-full border border-white/20">{s}</span>
+                                    <span key={s} className="bg-slate-100 text-slate-600 text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-xl">
+                                        {s}
+                                    </span>
                                 ))}
                             </div>
+
+                            {profile?.competitiveExpert && profile?.expertSubject && (
+                                <div className="inline-flex items-center gap-3 bg-blue-900 text-white px-5 py-3 rounded-2xl shadow-xl shadow-blue-900/10">
+                                    <Zap size={18} fill="currentColor" className="text-amber-400" />
+                                    <div className="text-left">
+                                        <p className="text-[9px] font-black uppercase tracking-widest opacity-70 mb-0.5">Competitive Expert</p>
+                                        <p className="text-sm font-black">{profile.expertSubject}</p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        {profile?.fees && (
-                            <div className="bg-white/10 border border-white/20 rounded-2xl px-6 py-4 text-center shrink-0">
-                                <p className="text-blue-300 text-xs font-bold uppercase tracking-widest mb-1">Monthly Fees</p>
-                                <p className="text-2xl font-black text-white flex items-center gap-1 justify-center">
-                                    <IndianRupee size={18} />{profile.fees}
-                                </p>
-                            </div>
-                        )}
+
+                        {/* Monthly Fees (Desktop) */}
+                        <div className="hidden lg:block shrink-0 bg-blue-50 border-2 border-blue-100 p-8 rounded-3xl text-center">
+                            <p className="text-blue-400 text-[10px] font-black uppercase tracking-widest mb-1">Starting From</p>
+                            <p className="text-4xl font-black text-blue-900 flex items-center justify-center gap-1">
+                                <IndianRupee size={24} /> {profile.fees || 'TBD'}
+                            </p>
+                            <p className="text-[10px] text-blue-400 font-bold uppercase mt-1">Per Month</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="page-container py-8 max-w-5xl">
-                <div className="grid lg:grid-cols-3 gap-8">
-
-                    {/* Left */}
-                    <div className="lg:col-span-2 space-y-5">
-                        {/* Tabs */}
-                        <div className="flex gap-1 bg-white rounded-xl border border-slate-100 p-1 shadow-sm">
-                            {['about', 'reviews'].map(tab => (
-                                <button key={tab} onClick={() => setActiveTab(tab)}
-                                    className={`flex-1 py-2.5 rounded-lg text-sm font-bold capitalize transition-all ${activeTab === tab ? 'bg-indigo-600 text-white shadow' : 'text-slate-500 hover:text-slate-700'}`}>
-                                    {tab === 'reviews' ? `Reviews (${reviews.length})` : 'About'}
-                                </button>
-                            ))}
+            {/* Main Content Area */}
+            <div className="page-container py-12">
+                <div className="grid lg:grid-cols-12 gap-8 md:gap-12 items-start">
+                    {/* Left Column */}
+                    <div className="lg:col-span-8 space-y-8">
+                        {/* Mobile Stats / Fees */}
+                        <div className="lg:hidden bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between text-center">
+                            <div className="flex-1">
+                                <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Monthly Fees</p>
+                                <p className="text-xl font-black text-blue-900 tracking-tight">₹{profile.fees || 'TBD'}</p>
+                            </div>
+                            <div className="w-px h-8 bg-slate-100"></div>
+                            <div className="flex-1">
+                                <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Experience</p>
+                                <p className="text-xl font-black text-blue-900 tracking-tight">{profile.experience} Yrs</p>
+                            </div>
                         </div>
 
-                        {activeTab === 'about' && (
-                            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-7 space-y-6">
-                                {profile?.bio && (
-                                    <div>
-                                        <h3 className="font-black text-slate-900 mb-3">About</h3>
-                                        <p className="text-slate-600 leading-relaxed">{profile.bio}</p>
+                        {/* Details Tabs */}
+                        <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+                            <div className="flex border-b border-slate-100 p-2">
+                                <button onClick={() => setActiveTab('about')} className={`flex-1 py-4 text-sm font-black uppercase tracking-widest rounded-2xl transition-all ${activeTab === 'about' ? 'bg-blue-900 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}>
+                                    Profile
+                                </button>
+                                <button onClick={() => setActiveTab('reviews')} className={`flex-1 py-4 text-sm font-black uppercase tracking-widest rounded-2xl transition-all ${activeTab === 'reviews' ? 'bg-blue-900 text-white shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}>
+                                    Reviews ({reviews.length})
+                                </button>
+                            </div>
+
+                            <div className="p-8 md:p-12">
+                                {activeTab === 'about' ? (
+                                    <div className="space-y-12">
+                                        {profile?.bio && (
+                                            <div>
+                                                <h3 className="text-xl font-black text-slate-900 mb-4">Professional Biography</h3>
+                                                <p className="text-slate-600 text-lg leading-relaxed whitespace-pre-line">{profile.bio}</p>
+                                            </div>
+                                        )}
+
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Qualification</p>
+                                                <p className="font-bold text-slate-900">{profile.qualification || 'N/A'}</p>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Level</p>
+                                                <p className="font-bold text-slate-900">{profile.teachingClass || 'Any'}</p>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Teaching Mode</p>
+                                                <p className="font-bold text-slate-900 capitalize">{profile.availability || 'Online/Offline'}</p>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Weekly Frequency</p>
+                                                <p className="font-bold text-slate-900">{profile.feesType || 'Discuss'}</p>
+                                            </div>
+                                        </div>
+
+                                        {profile?.youtubeChannel && (
+                                            <div className="bg-red-50 border border-red-100 p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6">
+                                                <div className="w-16 h-16 bg-red-600 text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-red-600/20"><Youtube size={32} /></div>
+                                                <div className="flex-1 text-center md:text-left">
+                                                    <h4 className="font-black text-red-900">Demo Lectures</h4>
+                                                    <p className="text-red-700/60 text-sm mb-4">Experience my teaching style on YouTube</p>
+                                                    <a href={profile.youtubeChannel} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-all">
+                                                        Visit Channel <ExternalLink size={14} />
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-
-                                {/* Stats Grid */}
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    {profile?.experience && (
-                                        <div className="bg-indigo-50 rounded-xl p-4 text-center">
-                                            <p className="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-1">Experience</p>
-                                            <p className="font-black text-indigo-900 text-lg">{profile.experience} Yrs</p>
-                                        </div>
-                                    )}
-                                    {profile?.fees && (
-                                        <div className="bg-emerald-50 rounded-xl p-4 text-center">
-                                            <p className="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-1">Fees/Month</p>
-                                            <p className="font-black text-emerald-900 text-lg">₹{profile.fees}</p>
-                                        </div>
-                                    )}
-                                    {avgRating > 0 && (
-                                        <div className="bg-amber-50 rounded-xl p-4 text-center">
-                                            <p className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-1">Rating</p>
-                                            <p className="font-black text-amber-900 text-lg flex items-center justify-center gap-1">
-                                                <Star size={14} className="fill-amber-400 text-amber-400" />{avgRating}
-                                            </p>
-                                        </div>
-                                    )}
-                                    {reviews.length > 0 && (
-                                        <div className="bg-violet-50 rounded-xl p-4 text-center">
-                                            <p className="text-xs font-bold text-violet-400 uppercase tracking-widest mb-1">Reviews</p>
-                                            <p className="font-black text-violet-900 text-lg">{reviews.length}</p>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Details */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    {profile?.teachingClass && (
-                                        <div className="bg-slate-50 rounded-xl p-4">
-                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Teaching Class</p>
-                                            <p className="font-bold text-slate-800">{profile.teachingClass}</p>
-                                        </div>
-                                    )}
-                                    {profile?.qualification && (
-                                        <div className="bg-slate-50 rounded-xl p-4">
-                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Qualification</p>
-                                            <p className="font-bold text-slate-800">{profile.qualification}</p>
-                                        </div>
-                                    )}
-                                    {profile?.availability && (
-                                        <div className="bg-slate-50 rounded-xl p-4">
-                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Mode</p>
-                                            <p className="font-bold text-slate-800 capitalize">{profile.availability === 'both' ? 'Online & Offline' : profile.availability}</p>
-                                        </div>
-                                    )}
-                                    {profile?.feesType && (
-                                        <div className="bg-slate-50 rounded-xl p-4">
-                                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Schedule</p>
-                                            <p className="font-bold text-slate-800">{profile.feesType === '3days' ? '3 days/week' : profile.feesType === '6days' ? '6 days/week' : 'To be discussed'}</p>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Expert Subject */}
-                                {profile?.competitiveExpert && profile?.expertSubject && (
-                                    <div className="bg-amber-50 border border-amber-100 rounded-xl p-4">
-                                        <p className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-1">Competitive Exam Expert</p>
-                                        <p className="font-bold text-amber-900">{profile.expertSubject}</p>
-                                    </div>
-                                )}
-
-                                {/* Schedule Table */}
-                                {profile?.schedule && Object.keys(profile.schedule).length > 0 && (
-                                    <div>
-                                        <h4 className="font-black text-slate-900 mb-3">Weekly Schedule</h4>
-                                        <div className="overflow-x-auto">
-                                            <table className="w-full text-sm border-collapse">
-                                                <thead>
-                                                    <tr className="bg-slate-50">
-                                                        <th className="border border-slate-200 px-3 py-2 text-left font-bold text-slate-600">Day</th>
-                                                        <th className="border border-slate-200 px-3 py-2 text-left font-bold text-slate-600">Status</th>
-                                                        <th className="border border-slate-200 px-3 py-2 text-left font-bold text-slate-600">Timing</th>
-                                                        <th className="border border-slate-200 px-3 py-2 text-left font-bold text-slate-600">From</th>
-                                                        <th className="border border-slate-200 px-3 py-2 text-left font-bold text-slate-600">To</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {Object.entries(profile.schedule).map(([day, s]) => (
-                                                        <tr key={day} className="hover:bg-slate-50/50">
-                                                            <td className="border border-slate-200 px-3 py-2 font-semibold text-slate-700">{day}</td>
-                                                            <td className="border border-slate-200 px-3 py-2">
-                                                                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${s.available ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>
-                                                                    {s.available ? 'Available' : 'Not Available'}
-                                                                </span>
-                                                            </td>
-                                                            <td className="border border-slate-200 px-3 py-2 text-slate-600">{s.available ? s.timing : '—'}</td>
-                                                            <td className="border border-slate-200 px-3 py-2 text-slate-600">{s.available && s.from ? s.from : '—'}</td>
-                                                            <td className="border border-slate-200 px-3 py-2 text-slate-600">{s.available && s.to ? s.to : '—'}</td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* YouTube */}
-                                {profile?.youtubeChannel && (
-                                    <div className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-xl p-4">
-                                        <div className="w-9 h-9 bg-red-600 rounded-lg flex items-center justify-center shrink-0">
-                                            <span className="text-white font-black text-xs">YT</span>
-                                        </div>
-                                        <div>
-                                            <p className="text-xs font-bold text-red-600 uppercase tracking-widest">YouTube Channel</p>
-                                            <a href={profile.youtubeChannel} target="_blank" rel="noopener noreferrer"
-                                                className="font-bold text-slate-800 text-sm hover:text-red-600 transition-colors">
-                                                {profile.youtubeChannel}
-                                            </a>
-                                        </div>
+                                ) : (
+                                    <div className="space-y-8">
+                                        {user?.role === 'student' && (
+                                            <div className="bg-slate-50 p-8 rounded-3xl mb-8">
+                                                <h4 className="font-black text-slate-900 mb-6">Leave a Review</h4>
+                                                <form onSubmit={handleReview} className="space-y-6">
+                                                    <StarRating value={reviewForm.rating} onChange={r => setReviewForm(f => ({ ...f, rating: r }))} />
+                                                    <textarea className="w-full p-6 rounded-2xl border-2 border-white focus:border-blue-900 outline-none h-32 text-slate-600 transition-all"
+                                                        placeholder="How was your experience?" value={reviewForm.comment}
+                                                        onChange={e => setReviewForm(f => ({ ...f, comment: e.target.value }))} required />
+                                                    <button type="submit" disabled={submitting} className="btn bg-blue-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest w-full">
+                                                        {submitting ? 'Posting...' : 'Post Review'}
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        )}
+                                        {reviews.length === 0 ? (
+                                            <div className="text-center py-12 opacity-50"><MessageSquare size={48} className="mx-auto mb-4" /><p className="font-bold">No reviews yet.</p></div>
+                                        ) : (
+                                            reviews.map(r => (
+                                                <div key={r._id} className="border-b border-slate-100 last:border-0 pb-8 last:pb-0">
+                                                    <div className="flex items-center justify-between mb-4">
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center font-black text-slate-400">{r.student?.name?.charAt(0)}</div>
+                                                            <div><p className="font-black text-slate-900 text-sm">{r.student?.name}</p><p className="text-[10px] font-bold text-slate-400">{new Date(r.createdAt).toLocaleDateString()}</p></div>
+                                                        </div>
+                                                        <div className="flex gap-0.5"><Star size={14} className="fill-amber-400 text-amber-400" /><span className="text-xs font-black text-amber-900 ml-1">{r.rating}</span></div>
+                                                    </div>
+                                                    <p className="text-slate-600 italic">"{r.comment}"</p>
+                                                </div>
+                                            ))
+                                        )}
                                     </div>
                                 )}
                             </div>
-                        )}
-
-                        {activeTab === 'reviews' && (
-                            <div className="space-y-4">
-                                {user?.role === 'student' && (
-                                    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-                                        <h3 className="font-black text-slate-900 mb-4 flex items-center gap-2">
-                                            <MessageSquare size={18} className="text-indigo-600" /> Write a Review
-                                        </h3>
-                                        <form onSubmit={handleReview} className="space-y-4">
-                                            <StarRating value={reviewForm.rating} onChange={r => setReviewForm(f => ({ ...f, rating: r }))} />
-                                            <textarea className="input-field resize-none h-24"
-                                                placeholder="Share your experience with this tutor..."
-                                                value={reviewForm.comment}
-                                                onChange={e => setReviewForm(f => ({ ...f, comment: e.target.value }))} required />
-                                            {reviewMsg === 'success' && (
-                                                <div className="flex items-center gap-2 text-emerald-600 text-sm font-semibold bg-emerald-50 p-3 rounded-xl">
-                                                    <CheckCircle2 size={16} /> Review submitted successfully!
-                                                </div>
-                                            )}
-                                            {reviewMsg && reviewMsg !== 'success' && (
-                                                <p className="text-red-500 text-sm font-semibold">{reviewMsg}</p>
-                                            )}
-                                            <button type="submit" disabled={submitting} className="btn btn-primary gap-2">
-                                                <Send size={15} /> {submitting ? 'Submitting...' : 'Submit Review'}
-                                            </button>
-                                        </form>
-                                    </div>
-                                )}
-                                {reviews.length === 0 ? (
-                                    <div className="bg-white rounded-2xl border border-slate-100 p-12 text-center">
-                                        <Star size={36} className="mx-auto text-slate-200 mb-3" />
-                                        <p className="text-slate-500 font-medium">No reviews yet. Be the first to review!</p>
-                                    </div>
-                                ) : reviews.map(r => (
-                                    <div key={r._id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-                                        <div className="flex items-start justify-between mb-3">
-                                            <div className="flex items-center gap-3">
-                                                <img
-                                                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(r.student?.name || 'U')}&size=40&background=e0e7ff&color=3730a3&bold=true&rounded=true`}
-                                                    alt={r.student?.name} className="w-10 h-10 rounded-full"
-                                                />
-                                                <div>
-                                                    <p className="font-bold text-slate-800 text-sm">{r.student?.name}</p>
-                                                    <p className="text-xs text-slate-400">{new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-                                                </div>
-                                            </div>
-                                            <div className="flex gap-0.5">
-                                                {[...Array(5)].map((_, i) => (
-                                                    <Star key={i} size={13} className={i < r.rating ? 'text-amber-400 fill-amber-400' : 'text-slate-200 fill-slate-200'} />
-                                                ))}
-                                            </div>
-                                        </div>
-                                        <p className="text-slate-600 text-sm leading-relaxed">{r.comment}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                        </div>
                     </div>
 
-                    {/* Right: Contact */}
-                    <div>
-                        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 sticky top-24">
-                            <h3 className="font-black text-slate-900 mb-5">Contact Tutor</h3>
-
+                    {/* Right Sidebar */}
+                    <div className="lg:col-span-4 space-y-6">
+                        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl space-y-6 sticky top-24">
+                            <h3 className="text-xl font-black text-blue-900">Direct Contact</h3>
+                            
                             {tutor.showPhone && tutor.phone ? (
-                                <a href={`tel:${tutor.phone}`} className="flex items-center gap-3 bg-emerald-50 border border-emerald-100 rounded-xl p-4 mb-4 hover:bg-emerald-100 transition-colors">
-                                    <div className="w-9 h-9 bg-emerald-600 rounded-lg flex items-center justify-center shrink-0">
-                                        <Phone size={16} className="text-white" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-emerald-600 font-bold uppercase tracking-widest">Phone</p>
-                                        <p className="font-black text-slate-800">{tutor.phone}</p>
-                                    </div>
+                                <a href={`tel:${tutor.phone}`} className="flex items-center gap-4 bg-emerald-50 border-2 border-emerald-100 p-6 rounded-2xl hover:bg-emerald-100 transition-all group">
+                                    <div className="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Phone size={20} /></div>
+                                    <div className="flex-1"><p className="text-[10px] font-black text-emerald-600 uppercase mb-0.5 tracking-widest">Call Now</p><p className="text-lg font-black text-emerald-950">{tutor.phone}</p></div>
                                 </a>
                             ) : contactUnlocked && tutor.phone ? (
-                                <div className="flex items-center gap-3 bg-emerald-50 border border-emerald-100 rounded-xl p-4 mb-4">
-                                    <div className="w-9 h-9 bg-emerald-600 rounded-lg flex items-center justify-center shrink-0">
-                                        <CheckCircle2 size={16} className="text-white" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-emerald-600 font-bold uppercase tracking-widest">Unlocked</p>
-                                        <p className="font-black text-slate-800">{tutor.phone}</p>
-                                    </div>
+                                <div className="flex items-center gap-4 bg-blue-50 border-2 border-blue-100 p-6 rounded-2xl">
+                                    <div className="w-12 h-12 bg-blue-900 text-white rounded-xl flex items-center justify-center"><CheckCircle2 size={20} /></div>
+                                    <div><p className="text-[10px] font-black text-blue-900 uppercase mb-0.5 tracking-widest">Unlocked</p><p className="text-lg font-black text-blue-950">{tutor.phone}</p></div>
                                 </div>
                             ) : (
-                                <div className="mb-4">
-                                    <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl p-4 mb-3">
-                                        <div className="w-9 h-9 bg-slate-300 rounded-lg flex items-center justify-center shrink-0">
-                                            <Lock size={16} className="text-white" />
-                                        </div>
-                                        <div>
-                                            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Phone Hidden</p>
-                                            <p className="font-black text-slate-400 tracking-widest">+91 ••••••••••</p>
-                                        </div>
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-4 bg-slate-50 border border-slate-100 p-5 rounded-2xl opacity-60">
+                                        <div className="w-12 h-12 bg-slate-300 text-white rounded-xl flex items-center justify-center"><Lock size={20} /></div>
+                                        <div><p className="text-[10px] font-black text-slate-400 uppercase mb-0.5">Phone Hidden</p><p className="text-lg font-black text-slate-400">+91 ••••• •••••</p></div>
                                     </div>
-                                    <button onClick={handleUnlock} disabled={unlocking}
-                                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-200">
-                                        <Lock size={15} />
-                                        {unlocking ? 'Processing...' : 'Unlock Contact — ₹200'}
+                                    <button onClick={handleUnlock} disabled={unlocking} className="w-full bg-blue-900 hover:bg-blue-800 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-900/20 flex items-center justify-center gap-3 transition-all active:scale-95">
+                                        {unlocking ? <Loader2 size={20} className="animate-spin" /> : <Lock size={18} />}
+                                        {unlocking ? 'Processing...' : 'Unlock Now — ₹200'}
                                     </button>
-                                    <p className="text-xs text-slate-400 text-center mt-2">One-time payment. Instant access.</p>
                                 </div>
                             )}
 
-                            {!user && (
-                                <p className="text-xs text-slate-400 text-center bg-slate-50 rounded-xl p-3 mb-4">
-                                    <Link to="/login" className="text-indigo-600 font-bold">Login</Link> as student to unlock contact
-                                </p>
-                            )}
-
-                            <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-50 rounded-xl p-3">
-                                <Shield size={14} className="text-emerald-500 shrink-0" />
-                                <span>Verified tutor. Safe & secure platform.</span>
-                            </div>
-
-                            <div className="mt-5 pt-4 border-t border-slate-100 space-y-2 text-sm text-slate-500">
-                                {profile?.subjects?.length > 0 && (
-                                    <div className="flex items-start gap-2">
-                                        <GraduationCap size={15} className="mt-0.5 text-indigo-400 shrink-0" />
-                                        <span>{profile.subjects.join(', ')}</span>
-                                    </div>
-                                )}
-                                {profile?.location && (
-                                    <div className="flex items-center gap-2">
-                                        <MapPin size={15} className="text-indigo-400 shrink-0" />
-                                        <span>{profile.location}</span>
-                                    </div>
-                                )}
+                            <div className="pt-6 border-t border-slate-50 space-y-4">
+                                <div className="flex items-center gap-3 text-emerald-600">
+                                    <Shield size={18} className="shrink-0" />
+                                    <p className="text-[10px] font-black uppercase tracking-widest leading-tight">Verified Platform Account</p>
+                                </div>
+                                <p className="text-xs text-slate-400 leading-relaxed">Payments are processed securely via Razorpay. One-time unlock fee.</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <Footer />
         </div>
     );
 };
 
 export default TutorPublicProfile;
-
-
-
-
-
-

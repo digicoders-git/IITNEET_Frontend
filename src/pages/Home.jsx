@@ -5,22 +5,53 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { GraduationCap, Building2, ArrowRight, Star, MapPin, IndianRupee, Search, Users, Award, TrendingUp, CheckCircle, BookOpen, Phone } from 'lucide-react';
 
-const CLASSES = ['KG','Class I','Class II','Class III','Class IV','Class V','Class VI','Class VII','Class VIII','Class IX','Class X','Class XI','Class XII','Class XI & XII - Foundation','IIT-JEE','IIT & NEET','NEET','BSc.','MSc.','BCA','BBA','MBA','NDA','CSAT','Banking','Other'];
-const SUBJECTS = ['English Language','Physics','Chemistry','Mathematics','Biology','History','Geography','Accountancy','Psychology','Sociology','Political Science','Economics','Business Studies','Computer Science','Biotechnology','Sangeet','Data Interpretation & Logical Reasoning','Quantitative Aptitude','CSAT','Other'];
+const CLASSES = ['KG', 'Class I', 'Class II', 'Class III', 'Class IV', 'Class V', 'Class VI', 'Class VII', 'Class VIII', 'Class IX', 'Class X', 'Class XI', 'Class XII', 'Class XI & XII - Foundation', 'IIT-JEE', 'IIT & NEET', 'NEET', 'BSc.', 'MSc.', 'BCA', 'BBA', 'MBA', 'NDA', 'CSAT', 'Banking', 'Other'];
+const SUBJECTS = ['English Language', 'Physics', 'Chemistry', 'Mathematics', 'Biology', 'History', 'Geography', 'Accountancy', 'Psychology', 'Sociology', 'Political Science', 'Economics', 'Business Studies', 'Computer Science', 'Biotechnology', 'Sangeet', 'Data Interpretation & Logical Reasoning', 'Quantitative Aptitude', 'CSAT', 'Other'];
 
 const Home = () => {
     const [searchClass, setSearchClass] = useState('');
     const [searchSubject, setSearchSubject] = useState('');
     const [searchCity, setSearchCity] = useState('');
     const [featured, setFeatured] = useState([]);
+    const [ads, setAds] = useState([]);
     const [loadingFeatured, setLoadingFeatured] = useState(true);
+    const [activeAdIndex, setActiveAdIndex] = useState(0);
 
     useEffect(() => {
         axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/featured`)
             .then(res => setFeatured(Array.isArray(res.data) ? res.data : []))
-            .catch(() => {})
-            .finally(() => setLoadingFeatured(false));
+            .catch(() => { });
+
+        axios.get(`${import.meta.env.VITE_API_URL}/api/ads/active`)
+            .then(res => setAds(res.data))
+            .catch(() => { });
+
+        setLoadingFeatured(false);
     }, []);
+
+    useEffect(() => {
+        if (ads.length > 1) {
+            const timer = setInterval(() => {
+                setActiveAdIndex((prev) => (prev + 1) % ads.length);
+            }, 5000);
+            return () => clearInterval(timer);
+        }
+    }, [ads]);
+
+    const handleAdClick = async (id, link) => {
+        try {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/ads/click/${id}`);
+            if (link) {
+                const url = link.startsWith('http') ? link : `https://${link}`;
+                window.open(url, '_blank');
+            }
+        } catch (err) {
+            if (link) {
+                const url = link.startsWith('http') ? link : `https://${link}`;
+                window.open(url, '_blank');
+            }
+        }
+    };
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -252,6 +283,88 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+
+            {/* ── ADS CAROUSEL ── */}
+            {ads.length > 0 && (
+                <section className="py-16 bg-white overflow-hidden">
+                    <div className="page-container">
+                        <div className="relative group">
+                            {/* Decorative Background Element */}
+                            <div className="absolute -top-10 -right-10 w-40 h-40 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-700"></div>
+                            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-600/10 rounded-full blur-3xl group-hover:bg-blue-600/20 transition-all duration-700"></div>
+
+                            <div className="bg-gradient-to-br from-blue-900 via-blue-900 to-indigo-900 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(30,58,138,0.3)] relative border border-white/10">
+                                <div className="flex flex-col md:flex-row min-h-[400px]">
+                                    {/* Image Side */}
+                                    <div className="md:w-1/2 relative overflow-hidden cursor-pointer group/img" onClick={() => handleAdClick(ads[activeAdIndex]._id, ads[activeAdIndex].link)}>
+                                        <img 
+                                            src={`${import.meta.env.VITE_API_URL}${ads[activeAdIndex].imageUrl}`} 
+                                            alt={ads[activeAdIndex].title} 
+                                            className="w-full h-full object-cover transition-transform duration-1000 group-hover/img:scale-110"
+                                        />
+                                        {/* Gradient Overlay for mobile transition */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-blue-900 md:bg-gradient-to-r md:from-transparent md:to-blue-900 opacity-60 md:opacity-40"></div>
+                                    </div>
+
+                                    {/* Content Side */}
+                                    <div className="md:w-1/2 p-10 md:p-14 flex flex-col justify-center relative z-10">
+                                        <div className="flex items-center gap-2 mb-6">
+                                            <span className="text-[11px] font-bold uppercase tracking-[0.2em] bg-gradient-to-r from-amber-400 to-amber-600 text-white px-4 py-1.5 rounded-full shadow-lg shadow-amber-500/20">
+                                                Premium Selection
+                                            </span>
+                                            <div className="h-px w-12 bg-white/20"></div>
+                                        </div>
+                                        
+                                        <h3 className="text-3xl md:text-4xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
+                                            {ads[activeAdIndex].title}
+                                        </h3>
+                                        
+                                        <p className="text-blue-100/90 text-base md:text-lg mb-10 line-clamp-3 leading-relaxed font-medium">
+                                            {ads[activeAdIndex].description}
+                                        </p>
+                                        
+                                        <div className="flex flex-wrap gap-4 mt-auto">
+                                            <button 
+                                                onClick={() => handleAdClick(ads[activeAdIndex]._id, ads[activeAdIndex].link)}
+                                                className="group/btn bg-white hover:bg-amber-500 text-blue-900 hover:text-white font-bold px-10 py-4 rounded-xl transition-all duration-300 flex items-center gap-3 shadow-[0_10px_20px_rgba(0,0,0,0.1)] active:scale-95"
+                                            >
+                                                Explore Now 
+                                                <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
+                                            </button>
+                                            
+                                            {ads[activeAdIndex].coachingId?.name && (
+                                                <div className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-md rounded-lg border border-white/10">
+                                                    <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
+                                                    <span className="text-white/80 text-sm font-semibold">{ads[activeAdIndex].coachingId.name}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {/* Progress Indicator and Dots */}
+                                {ads.length > 1 && (
+                                    <div className="absolute bottom-8 right-10 md:right-14 flex items-center gap-6">
+                                        <div className="flex gap-2.5">
+                                            {ads.map((_, i) => (
+                                                <button 
+                                                    key={i}
+                                                    onClick={() => setActiveAdIndex(i)}
+                                                    className={`h-2 rounded-full transition-all duration-500 ${i === activeAdIndex ? 'w-10 bg-amber-500' : 'w-2 bg-white/20 hover:bg-white/40'}`}
+                                                    aria-label={`Go to slide ${i + 1}`}
+                                                />
+                                            ))}
+                                        </div>
+                                        <div className="text-white/30 text-xs font-black tracking-widest hidden sm:block">
+                                            0{activeAdIndex + 1} / 0{ads.length}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
 
             {/* ── HOW IT WORKS ── */}
             <section className="py-16 bg-white">

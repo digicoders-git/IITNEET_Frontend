@@ -46,14 +46,9 @@ const ContactPage = () => {
                             <p className="text-gray-500 text-sm">support@iitneet.com</p>
                         </div>
                         <div className="bg-white border-2 border-gray-200 p-6 hover:border-amber-500 transition-all">
-                            <Phone size={22} className="text-blue-900 mb-3" />
-                            <h4 className="font-bold text-blue-900 mb-1">Call Us</h4>
-                            <p className="text-gray-500 text-sm">+91 98765 43210</p>
-                        </div>
-                        <div className="bg-white border-2 border-gray-200 p-6 hover:border-amber-500 transition-all">
                             <Clock size={22} className="text-blue-900 mb-3" />
-                            <h4 className="font-bold text-blue-900 mb-1">Working Hours</h4>
-                            <p className="text-gray-500 text-sm">Mon–Sat, 9AM – 6PM</p>
+                            <h4 className="font-bold text-blue-900 mb-1">Response Time</h4>
+                            <p className="text-gray-500 text-sm">Usually within 24 hours</p>
                         </div>
                     </div>
 

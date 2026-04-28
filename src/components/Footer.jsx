@@ -8,7 +8,11 @@ const Footer = () => {
                 <div className="grid md:grid-cols-4 gap-8 mb-10">
                     <div>
                         <div className="mb-4">
-                            <span className="text-white font-bold text-xl">IIT<span className="text-amber-400">-NEET</span>.com</span>
+                            <img 
+                                src="/logo.png" 
+                                alt="IIT-NEET.com Logo" 
+                                className="h-8 w-auto brightness-0 invert"
+                            />
                         </div>
                         <p className="text-sm leading-relaxed">India's trusted platform for IIT-JEE and NEET preparation. Find verified tutors and top coaching institutes near you.</p>
                     </div>
@@ -25,13 +29,14 @@ const Footer = () => {
                         <ul className="space-y-2 text-sm">
                             <li><Link to="/register?role=tutor" className="hover:text-amber-400 transition-colors">Join as Tutor</Link></li>
                             <li><Link to="/register?role=coaching" className="hover:text-amber-400 transition-colors">List Your Institute</Link></li>
+                            <li><Link to="/advertising" className="hover:text-amber-400 transition-colors">Advertise With Us</Link></li>
                         </ul>
                     </div>
                     <div>
                         <h4 className="font-bold text-white mb-4 text-sm uppercase tracking-wide">Support</h4>
                         <ul className="space-y-2 text-sm">
                             <li><Link to="/contact" className="hover:text-amber-400 transition-colors">Help & Support</Link></li>
-                            <li><Link to="/contact" className="hover:text-amber-400 transition-colors">Advertising</Link></li>
+                            <li><Link to="/advertising" className="hover:text-amber-400 transition-colors">Advertising</Link></li>
                             <li><Link to="/contact" className="hover:text-amber-400 transition-colors">Contact Us</Link></li>
                         </ul>
                     </div>
