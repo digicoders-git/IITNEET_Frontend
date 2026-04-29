@@ -128,6 +128,9 @@ const CoachingAds = () => {
                 theme: { color: "#1e1b4b" }
             };
 
+            if (!window.Razorpay) {
+                return alert('Razorpay SDK failed to load. Please check your internet connection or disable ad-blockers.');
+            }
             const rzp = new window.Razorpay(options);
             rzp.open();
         } catch (err) {
