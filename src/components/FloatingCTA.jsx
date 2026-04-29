@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, MessageCircle } from 'lucide-react';
+import { Phone } from 'lucide-react';
 
 const WHATSAPP_NUMBER = '919876543210';
 const CALL_NUMBER = '+919876543210';
@@ -26,8 +26,8 @@ const FloatingCTA = () => {
                 </span>
                 <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MSG}`}
                     target="_blank" rel="noopener noreferrer"
-                    className="w-14 h-14 bg-green-600 hover:bg-green-700 flex items-center justify-center shadow-lg transition-all hover:scale-110">
-                    <MessageCircle size={22} className="text-white" />
+                    className="w-14 h-14 bg-green-600 hover:bg-green-700 flex items-center justify-center shadow-lg transition-all hover:scale-110 overflow-hidden">
+                    <img src="/whatsapp.png" alt="WhatsApp" className="w-full h-full object-cover" />
                 </a>
             </div>
         </div>

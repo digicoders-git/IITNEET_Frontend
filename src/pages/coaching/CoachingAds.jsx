@@ -158,16 +158,16 @@ const CoachingAds = () => {
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-100 pb-8">
                 <div>
-                    <h2 className="text-2xl font-black text-slate-900">Advertisements</h2>
-                    <p className="text-slate-500 text-sm mt-1">Create and manage your institute's ads</p>
+                    <h2 className="text-3xl font-black text-slate-900 tracking-tight">Advertisements</h2>
+                    <p className="text-slate-500 text-sm mt-1">Create and manage your institute's live advertisements</p>
                 </div>
                 <button 
                     onClick={() => setIsAdding(!isAdding)}
-                    className="btn bg-blue-900 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-800 transition-all"
+                    className={`btn px-6 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg ${isAdding ? 'bg-slate-100 text-slate-600 hover:bg-slate-200 shadow-none' : 'bg-blue-900 text-white hover:bg-blue-800 shadow-blue-900/20'}`}
                 >
-                    {isAdding ? 'Cancel' : <><Plus size={18} /> Create New Ad</>}
+                    {isAdding ? 'Cancel' : <><Plus size={20} /> Create New Ad</>}
                 </button>
             </div>
 
