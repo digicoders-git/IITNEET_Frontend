@@ -44,9 +44,9 @@ const Register = () => {
                 <div className="w-full max-w-md">
                     <div className="bg-white border-2 border-gray-200 p-8">
                         <div className="mb-8 text-center">
-                            <img 
-                                src="/logo.png" 
-                                alt="IIT-NEET.com Logo" 
+                            <img
+                                src="/logo.png"
+                                alt="IIT-NEET.com Logo"
                                 className="h-12 w-auto mx-auto mb-6"
                             />
                             <h1 className="text-3xl font-bold text-blue-900 mb-2">Create Account</h1>
@@ -62,7 +62,7 @@ const Register = () => {
                         <form onSubmit={handleSubmit} className="space-y-5">
                             {/* Role Selector */}
                             <div>
-                                <label className="text-sm font-bold text-blue-900 mb-2 block">I am a...</label>
+                                <label className="text-sm font-bold text-blue-900 mb-2 block">Join us as...</label>
                                 <div className="grid grid-cols-3 gap-2">
                                     {ROLES.map(role => (
                                         <button key={role.value} type="button"
