@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Check, X, Mail, Shield, User, Search, Filter } from 'lucide-react';
+import { Check, X, Mail, Shield, User, Search, Filter, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const UserManagement = () => {
@@ -29,6 +29,19 @@ const UserManagement = () => {
             setUsers(users.map(u => u._id === id ? { ...u, isApproved: !u.isApproved } : u));
         } catch (err) {
             console.error('Failed to update approval:', err);
+        }
+    };
+
+    const deleteUser = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this user and all their data? This action cannot be undone.')) return;
+        try {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
+                headers: { Authorization: `Bearer ${currentUser?.token}` }
+            });
+            setUsers(users.filter(u => u._id !== id));
+        } catch (err) {
+            console.error('Failed to delete user:', err);
+            alert('Failed to delete user');
         }
     };
 
@@ -129,17 +142,26 @@ const UserManagement = () => {
                                     <td className="px-8 py-6 text-right">
                                         <div className="flex justify-end gap-2">
                                             {u.role !== 'admin' && (
-                                                <button 
-                                                    onClick={() => toggleApproval(u._id, u.isApproved)}
-                                                    className={`
-                                                        px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all
-                                                        ${u.isApproved 
-                                                            ? 'border border-rose-100 text-rose-500 hover:bg-rose-500 hover:text-white' 
-                                                            : 'bg-violet-600 text-white shadow-lg shadow-violet-100 hover:bg-violet-700'}
-                                                    `}
-                                                >
-                                                    {u.isApproved ? 'Revoke Approval' : 'Authorize Listing'}
-                                                </button>
+                                                <div className="flex gap-2">
+                                                    <button 
+                                                        onClick={() => toggleApproval(u._id, u.isApproved)}
+                                                        className={`
+                                                            px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all
+                                                            ${u.isApproved 
+                                                                ? 'border border-rose-100 text-rose-500 hover:bg-rose-500 hover:text-white' 
+                                                                : 'bg-violet-600 text-white shadow-lg shadow-violet-100 hover:bg-violet-700'}
+                                                        `}
+                                                    >
+                                                        {u.isApproved ? 'Revoke Approval' : 'Authorize Listing'}
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => deleteUser(u._id)}
+                                                        className="p-2.5 rounded-2xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm border border-rose-100"
+                                                        title="Delete User"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </div>
                                             )}
                                         </div>
                                     </td>

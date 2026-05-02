@@ -26,6 +26,11 @@ import CoachingListing from './pages/public/CoachingListing';
 import CoachingPublicProfile from './pages/public/CoachingPublicProfile';
 import ContactPage from './pages/public/ContactPage';
 import AdvertisingPage from './pages/public/AdvertisingPage';
+import AboutUs from './pages/public/AboutUs';
+import Pricing from './pages/public/Pricing';
+import RefundPolicy from './pages/public/RefundPolicy';
+import TermsAndConditions from './pages/public/TermsAndConditions';
+import PrivacyPolicy from './pages/public/PrivacyPolicy';
 import FloatingCTA from './components/FloatingCTA';
 
 
@@ -65,6 +70,11 @@ const AppContent = () => {
                 <Route path="/coachings/:userId" element={<CoachingPublicProfile />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/advertising" element={<AdvertisingPage />} />
+                <Route path="/about" element={<AboutUs />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/refund-policy" element={<RefundPolicy />} />
+                <Route path="/terms" element={<TermsAndConditions />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
 
                 {/* Admin Routes */}
                 <Route path="/admin/*" element={
