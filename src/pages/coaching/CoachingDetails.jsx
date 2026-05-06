@@ -30,7 +30,8 @@ const CoachingDetails = () => {
 
     const addCourse = () => {
         const c = courseInput.trim();
-        if (c && !form.courses.includes(c)) setForm(f => ({ ...f, courses: [...f.courses, c] }));
+        const currentCourses = Array.isArray(form.courses) ? form.courses : [];
+        if (c && !currentCourses.includes(c)) setForm(f => ({ ...f, courses: [...currentCourses, c] }));
         setCourseInput('');
     };
 
@@ -70,7 +71,7 @@ const CoachingDetails = () => {
             </div>
 
             {msg && (
-                <div className={`p-4 rounded-2xl text-sm font-semibold ${msg.includes('success') ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'}`}>
+                <div className={`p-4 rounded-2xl text-sm font-semibold ${String(msg).includes('success') ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'}`}>
                     {msg}
                 </div>
             )}

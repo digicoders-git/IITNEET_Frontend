@@ -29,10 +29,12 @@ const AdminCoachings = () => {
         }
     };
 
-    const filtered = coachings.filter(c =>
-        c.name.toLowerCase().includes(search.toLowerCase()) ||
-        c.email.toLowerCase().includes(search.toLowerCase())
-    );
+    const filtered = coachings.filter(c => {
+        const name = c.name || '';
+        const email = c.email || '';
+        return name.toLowerCase().includes(search.toLowerCase()) ||
+               email.toLowerCase().includes(search.toLowerCase());
+    });
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">

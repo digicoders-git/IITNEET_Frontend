@@ -116,10 +116,13 @@ const TutorProfile = () => {
     };
 
     const toggleSubject = (s) => {
-        setForm(f => ({
-            ...f,
-            subjects: f.subjects.includes(s) ? f.subjects.filter(x => x !== s) : [...f.subjects, s]
-        }));
+        setForm(f => {
+            const currentSubjects = Array.isArray(f.subjects) ? f.subjects : [];
+            return {
+                ...f,
+                subjects: currentSubjects.includes(s) ? currentSubjects.filter(x => x !== s) : [...currentSubjects, s]
+            };
+        });
     };
 
     const updateSchedule = (day, field, value) => {
@@ -263,7 +266,7 @@ const TutorProfile = () => {
                     <div className="flex flex-wrap gap-2 p-4 bg-gray-50 border-2 border-gray-200">
                         {SUBJECTS.map(s => (
                             <button key={s} type="button" onClick={() => toggleSubject(s)}
-                                className={`text-xs font-bold px-3 py-1.5 border-2 transition-all ${form.subjects.includes(s) ? 'bg-blue-900 text-white border-blue-900' : 'bg-white text-gray-600 border-gray-300 hover:border-blue-900'}`}>
+                                className={`text-xs font-bold px-3 py-1.5 border-2 transition-all ${(form.subjects || []).includes(s) ? 'bg-blue-900 text-white border-blue-900' : 'bg-white text-gray-600 border-gray-300 hover:border-blue-900'}`}>
                                 {s}
                             </button>
                         ))}
