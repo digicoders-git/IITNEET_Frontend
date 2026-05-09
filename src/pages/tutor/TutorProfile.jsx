@@ -48,9 +48,13 @@ const TutorProfile = () => {
         },
         hasYoutube: false, youtubeChannel: '',
         location: '', pincode: '', locality: '',
-        phone: '', mobileVisibility: 'paid',
+        phone: '', mobileVisibility: 'paid', profileVisibility: 'all',
         bio: '',
     });
+    const [otp, setOtp] = useState('');
+    const [showOtpInput, setShowOtpInput] = useState(false);
+    const [otpLoading, setOtpLoading] = useState(false);
+    const [originalData, setOriginalData] = useState({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -92,8 +96,14 @@ const TutorProfile = () => {
                     locality: profile.locality || '',
                     phone: u?.phone || '',
                     mobileVisibility: profile.mobileVisibility || 'paid',
+                    profileVisibility: profile.profileVisibility || 'all',
                     bio: profile.bio || '',
                 }));
+                setOriginalData({
+                    name: u?.name || '',
+                    age: profile.age || '',
+                    sex: profile.sex || ''
+                });
                 const bio = profile.bio || '';
                 setWordCount(bio.trim() === '' ? 0 : bio.trim().split(/\s+/).length);
                 if (profile.profileImage) setPhotoUrl(`${import.meta.env.VITE_API_URL}${profile.profileImage}`);
@@ -174,6 +184,7 @@ const TutorProfile = () => {
         setSaving(true); setMsg({ text: '', ok: true });
         try {
             const payload = { ...form, name: `${form.firstName} ${form.lastName}`.trim() };
+            // If name is restricted, we send it anyway but the backend will ignore it
             await axios.put(`${import.meta.env.VITE_API_URL}/api/profiles/me`, payload, {
                 headers: { Authorization: `Bearer ${user?.token}` }
             });
@@ -182,6 +193,34 @@ const TutorProfile = () => {
         } catch (err) {
             setMsg({ text: err.response?.data?.message || 'Save failed', ok: false });
         } finally { setSaving(false); }
+    };
+
+    const handleRequestOTP = async () => {
+        setOtpLoading(true);
+        try {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/profiles/request-phone-otp`, {}, {
+                headers: { Authorization: `Bearer ${user?.token}` }
+            });
+            setShowOtpInput(true);
+            setMsg({ text: 'OTP sent to your email!', ok: true });
+        } catch (err) {
+            setMsg({ text: err.response?.data?.message || 'Failed to send OTP', ok: false });
+        } finally { setOtpLoading(false); }
+    };
+
+    const handleVerifyOTP = async () => {
+        setOtpLoading(true);
+        try {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/profiles/verify-phone-otp`, { otp, phone: form.phone }, {
+                headers: { Authorization: `Bearer ${user?.token}` }
+            });
+            setMsg({ text: 'Phone number updated successfully!', ok: true });
+            setShowOtpInput(false);
+            setOtp('');
+            fetchProfile();
+        } catch (err) {
+            setMsg({ text: err.response?.data?.message || 'OTP verification failed', ok: false });
+        } finally { setOtpLoading(false); }
     };
 
     if (loading) return (
@@ -243,29 +282,37 @@ const TutorProfile = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <Label>First Name</Label>
-                                <input className="input-field" placeholder="First Name"
-                                    value={form.firstName} onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))} />
+                                <input className={`input-field ${originalData.name ? 'bg-gray-100' : ''}`} placeholder="First Name"
+                                    value={form.firstName} onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))}
+                                    disabled={!!originalData.name} />
+                                {originalData.name && <p className="text-[10px] text-gray-400 mt-0.5">Name cannot be changed</p>}
                             </div>
                             <div>
                                 <Label>Last Name</Label>
-                                <input className="input-field" placeholder="Last Name"
-                                    value={form.lastName} onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))} />
+                                <input className={`input-field ${originalData.name ? 'bg-gray-100' : ''}`} placeholder="Last Name"
+                                    value={form.lastName} onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))}
+                                    disabled={!!originalData.name} />
+                                {originalData.name && <p className="text-[10px] text-gray-400 mt-0.5">Name cannot be changed</p>}
                             </div>
                         </div>
                         <div className="grid grid-cols-3 gap-4">
                             <div>
                                 <Label>Age</Label>
-                                <input type="number" className="input-field" placeholder="Age" min="18" max="80"
-                                    value={form.age} onChange={e => setForm(f => ({ ...f, age: e.target.value }))} />
+                                <input type="number" className={`input-field ${originalData.age ? 'bg-gray-100' : ''}`} placeholder="Age" min="18" max="80"
+                                    value={form.age} onChange={e => setForm(f => ({ ...f, age: e.target.value }))}
+                                    disabled={!!originalData.age} />
+                                {originalData.age && <p className="text-[10px] text-gray-400 mt-0.5">Age cannot be changed</p>}
                             </div>
                             <div>
                                 <Label>Sex</Label>
-                                <select className="input-field" value={form.sex} onChange={e => setForm(f => ({ ...f, sex: e.target.value }))}>
+                                <select className={`input-field ${originalData.sex ? 'bg-gray-100' : ''}`} value={form.sex} onChange={e => setForm(f => ({ ...f, sex: e.target.value }))}
+                                    disabled={!!originalData.sex}>
                                     <option value="">Select</option>
                                     <option>Male</option>
                                     <option>Female</option>
                                     <option>Other</option>
                                 </select>
+                                {originalData.sex && <p className="text-[10px] text-gray-400 mt-0.5">Sex cannot be changed</p>}
                             </div>
                             <div>
                                 <Label>Maximum Qualification</Label>
@@ -521,20 +568,60 @@ const TutorProfile = () => {
                     </div>
                     <div>
                         <Label>Mobile Number</Label>
-                        <input className="input-field" placeholder="+91 98765 43210"
-                            value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
-                        <p className="text-xs text-gray-400 mt-1">Verified by sending OTP on Email ID</p>
+                        <div className="flex gap-2">
+                            <input className="input-field flex-1" placeholder="+91 98765 43210"
+                                value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
+                            {originalData.name && ( // Show verify button only after profile is somewhat set
+                                <button onClick={handleRequestOTP} disabled={otpLoading}
+                                    className="bg-blue-900 text-white px-4 text-xs font-bold whitespace-nowrap">
+                                    {otpLoading ? '...' : 'Verify via OTP'}
+                                </button>
+                            )}
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1">Changing mobile number requires email OTP verification</p>
+                        
+                        {showOtpInput && (
+                            <div className="mt-3 p-4 bg-blue-50 border-2 border-blue-100 space-y-3">
+                                <Label>Enter OTP sent to your email</Label>
+                                <div className="flex gap-2">
+                                    <input className="input-field bg-white" placeholder="6-digit OTP"
+                                        value={otp} onChange={e => setOtp(e.target.value)} />
+                                    <button onClick={handleVerifyOTP} disabled={otpLoading || !otp}
+                                        className="bg-amber-500 text-white px-6 font-bold text-sm">
+                                        {otpLoading ? 'Verifying...' : 'Update Number'}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
-                <div>
-                    <Label>Visibility of Mobile Number</Label>
-                    <div className="flex gap-6">
-                        <Radio name="mobileVis" checked={form.mobileVisibility === 'paid'}
-                            onChange={() => setForm(f => ({ ...f, mobileVisibility: 'paid' }))}
-                            label="1) Only to paid users" />
-                        <Radio name="mobileVis" checked={form.mobileVisibility === 'all'}
-                            onChange={() => setForm(f => ({ ...f, mobileVisibility: 'all' }))}
-                            label="2) For all users" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <Label>Visibility of Mobile Number</Label>
+                        <div className="flex gap-6">
+                            <Radio name="mobileVis" checked={form.mobileVisibility === 'paid'}
+                                onChange={() => setForm(f => ({ ...f, mobileVisibility: 'paid' }))}
+                                label="1) Only to paid users" />
+                            <Radio name="mobileVis" checked={form.mobileVisibility === 'all'}
+                                onChange={() => {
+                                    if (window.confirm("Warning: Selecting this will make your mobile number visible to everyone on the platform. Are you sure?")) {
+                                        setForm(f => ({ ...f, mobileVisibility: 'all' }));
+                                    }
+                                }}
+                                label="2) For all users" />
+                        </div>
+                    </div>
+                    <div>
+                        <Label>Profile Visibility (Search Listings)</Label>
+                        <div className="flex gap-6">
+                            <Radio name="profileVis" checked={form.profileVisibility === 'all'}
+                                onChange={() => setForm(f => ({ ...f, profileVisibility: 'all' }))}
+                                label="1) Visible to all users" />
+                            <Radio name="profileVis" checked={form.profileVisibility === 'paid'}
+                                onChange={() => setForm(f => ({ ...f, profileVisibility: 'paid' }))}
+                                label="2) Only to paid users" />
+                        </div>
+                        <p className="text-[10px] text-gray-400 mt-1">If 'Only to paid users' is selected, only students with active subscription can see you in search results.</p>
                     </div>
                 </div>
             </SectionBox>
