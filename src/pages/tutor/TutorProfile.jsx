@@ -6,7 +6,7 @@ import { Save, Camera, MapPin, Phone } from 'lucide-react';
 const CLASSES = ['KG','Class I','Class II','Class III','Class IV','Class V','Class VI','Class VII','Class VIII','Class IX','Class X','Class XI','Class XII','Class XI & XII - Foundation','IIT-JEE','IIT & NEET','NEET','BSc.','MSc.','BCA','BBA','MBA','NDA','CSAT','Banking','Other'];
 const SUBJECTS = ['English Language','Physics','Chemistry','Mathematics','Biology','History','Geography','Accountancy','Psychology','Sociology','Political Science','Economics','Business Studies','Computer Science','Biotechnology','Sangeet','Data Interpretation & Logical Reasoning','Quantitative Aptitude','CSAT','Other'];
 const QUALIFICATIONS = ['10th Pass','12th Pass','Diploma','B.A.','B.Sc.','B.Com','B.Tech / B.E.','BCA','BBA','M.A.','M.Sc.','M.Com','M.Tech / M.E.','MCA','MBA','Ph.D.','Other'];
-const FEES_OPTIONS = [2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000,16000,17000,18000,19000,20000];
+const FEES_OPTIONS = [2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000];
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 const SectionBox = ({ title, children }) => (
@@ -310,26 +310,36 @@ const TutorProfile = () => {
                             { v: 'discuss', l: '3) Will discuss later' },
                         ].map(o => (
                             <Radio key={o.v} name="feesType" checked={form.feesType === o.v}
-                                onChange={() => setForm(f => ({ ...f, feesType: o.v }))} label={o.l} />
+                                onChange={() => {
+                                    setForm(f => {
+                                        let newFees = f.fees;
+                                        if (o.v === 'discuss') newFees = '';
+                                        else if (o.v === '3days' && newFees > 6000) newFees = 6000;
+                                        else if (o.v === '6days' && newFees > 12000) newFees = 12000;
+                                        return { ...f, feesType: o.v, fees: newFees };
+                                    });
+                                }} label={o.l} />
                         ))}
                     </div>
                 </div>
-                <div>
-                    <Label>Select Monthly Fees Amount</Label>
-                    <div className="flex flex-wrap gap-2">
-                        {FEES_OPTIONS.map(fee => (
-                            <button key={fee} type="button" onClick={() => setForm(f => ({ ...f, fees: fee }))}
-                                className={`text-sm font-bold px-4 py-2 border-2 transition-all ${form.fees == fee ? 'bg-blue-900 text-white border-blue-900' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-900'}`}>
-                                ₹{fee.toLocaleString()}
-                            </button>
-                        ))}
+                {form.feesType !== 'discuss' && (
+                    <div>
+                        <Label>Select Monthly Fees Amount</Label>
+                        <div className="flex flex-wrap gap-2">
+                            {FEES_OPTIONS.filter(f => form.feesType === '3days' ? f <= 6000 : f <= 12000).map(fee => (
+                                <button key={fee} type="button" onClick={() => setForm(f => ({ ...f, fees: fee }))}
+                                    className={`text-sm font-bold px-4 py-2 border-2 transition-all ${form.fees == fee ? 'bg-blue-900 text-white border-blue-900' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-900'}`}>
+                                    ₹{fee.toLocaleString()}
+                                </button>
+                            ))}
+                        </div>
+                        {form.fees && (
+                            <p className="text-sm text-amber-600 font-bold mt-2">
+                                Selected: ₹{Number(form.fees).toLocaleString()} / month
+                            </p>
+                        )}
                     </div>
-                    {form.fees && (
-                        <p className="text-sm text-amber-600 font-bold mt-2">
-                            Selected: ₹{Number(form.fees).toLocaleString()} / month
-                        </p>
-                    )}
-                </div>
+                )}
             </SectionBox>
 
             {/* ── 6. AVAILABILITY ── */}
