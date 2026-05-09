@@ -22,6 +22,32 @@ const AdminAds = () => {
         }
     };
 
+    const fetchAllAds = async () => {
+        setLoading(true);
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/ads/all`, {
+                headers: { Authorization: `Bearer ${user?.token}` }
+            });
+            setAds(res.data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!confirm('Are you sure you want to delete this ad?')) return;
+        try {
+            await axios.delete(`${import.meta.env.VITE_API_URL}/api/ads/${id}`, {
+                headers: { Authorization: `Bearer ${user?.token}` }
+            });
+            fetchAllAds();
+        } catch (err) {
+            alert('Failed to delete ad');
+        }
+    };
+
     useEffect(() => { 
         fetchAllAds(); 
         fetchSettings();
