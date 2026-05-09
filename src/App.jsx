@@ -52,12 +52,15 @@ const ScrollToTop = () => {
 const AppContent = () => {
     const location = useLocation();
     const { user } = useAuth();
-    const isAdminPanel = location.pathname.startsWith('/admin');
-
+    const isPanel = location.pathname.startsWith('/admin') || 
+                  location.pathname.startsWith('/tutor') || 
+                  location.pathname.startsWith('/coaching') || 
+                  location.pathname.startsWith('/student');
+    
     return (
         <>
             <ScrollToTop />
-            {!isAdminPanel && <FloatingCTA />}
+            {!isPanel && <FloatingCTA />}
             <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<Home />} />
