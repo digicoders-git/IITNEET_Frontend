@@ -52,11 +52,12 @@ const ScrollToTop = () => {
 const AppContent = () => {
     const location = useLocation();
     const { user } = useAuth();
+    const isAdminPanel = location.pathname.startsWith('/admin');
 
     return (
         <>
             <ScrollToTop />
-            <FloatingCTA />
+            {!isAdminPanel && <FloatingCTA />}
             <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<Home />} />
