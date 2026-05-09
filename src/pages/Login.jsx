@@ -82,11 +82,11 @@ const Login = () => {
 
                         <div className="mt-6 p-4 bg-gray-50 border-2 border-gray-200">
                             <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Demo Accounts</p>
-                            <div className="space-y-1 text-xs text-gray-500">
+                            {/* <div className="space-y-1 text-xs text-gray-500">
                                 <p><span className="font-bold text-blue-900">Admin:</span> admin@iitneet.com / admin123</p>
                                 <p><span className="font-bold text-blue-900">Tutor:</span> rajesh@iitneet.com / tutor123</p>
                                 <p><span className="font-bold text-blue-900">Student:</span> aryan@student.com / student123</p>
-                            </div>
+                            </div> */}
                         </div>
 
                         <p className="text-center text-gray-500 text-sm mt-6">
