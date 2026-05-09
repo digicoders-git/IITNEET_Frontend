@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
-import { Plus, Trash2, Clock, CheckCircle, AlertCircle, Image as ImageIcon, ExternalLink, Megaphone, Loader2, CreditCard } from 'lucide-react';
+import { Plus, Trash2, Clock, CheckCircle, Image as ImageIcon, Megaphone, Loader2, CreditCard, Video, ChevronDown, ChevronUp } from 'lucide-react';
 
 const CoachingAds = () => {
     const { user } = useAuth();
@@ -15,10 +15,14 @@ const CoachingAds = () => {
         imageUrl: '', 
         link: '',
         duration: 1,
+        videoUrl: '',
         socialLinks: { facebook: '', instagram: '', twitter: '', youtube: '' }
     });
     const [settings, setSettings] = useState({ adMonthlyPrice: 199 });
     const [error, setError] = useState('');
+    const [uploadingVideo, setUploadingVideo] = useState(false);
+    const [openFaq, setOpenFaq] = useState(null);
+    const videoRef = useRef(null);
 
     const fetchAds = async () => {
         try {
@@ -47,6 +51,36 @@ const CoachingAds = () => {
         fetchSettings();
     }, [user]);
 
+    const handleVideoUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Check duration via a temporary video element
+        const url = URL.createObjectURL(file);
+        const tempVideo = document.createElement('video');
+        tempVideo.src = url;
+        tempVideo.onloadedmetadata = async () => {
+            URL.revokeObjectURL(url);
+            if (tempVideo.duration > 300) {
+                setError('Video must not exceed 5 minutes.');
+                return;
+            }
+            setUploadingVideo(true);
+            const formData = new FormData();
+            formData.append('video', file);
+            try {
+                const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/ads/upload-video`, formData, {
+                    headers: { Authorization: `Bearer ${user?.token}`, 'Content-Type': 'multipart/form-data' }
+                });
+                setForm(f => ({ ...f, videoUrl: res.data.videoUrl }));
+            } catch (err) {
+                setError('Failed to upload video');
+            } finally {
+                setUploadingVideo(false);
+            }
+        };
+    };
+
     const handleFileUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -73,7 +107,6 @@ const CoachingAds = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!form.imageUrl) return setError('Please upload an advertisement image');
-        
         try {
             await axios.post(`${import.meta.env.VITE_API_URL}/api/ads`, form, {
                 headers: { Authorization: `Bearer ${user?.token}` }
@@ -85,6 +118,7 @@ const CoachingAds = () => {
                 imageUrl: '', 
                 link: '',
                 duration: 1,
+                videoUrl: '',
                 socialLinks: { facebook: '', instagram: '', twitter: '', youtube: '' }
             });
             fetchAds();
@@ -308,9 +342,33 @@ const CoachingAds = () => {
                             
                             {error && <p className="text-red-500 text-sm font-bold bg-red-50 p-3 rounded-lg border border-red-100">{error}</p>}
                             
+                            {/* Video Upload */}
+                            <div>
+                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 block">Institute Video (Optional, max 5 min)</label>
+                                <div className="relative group">
+                                    <div className={`rounded-2xl border-2 border-dashed flex flex-col items-center justify-center p-6 transition-all ${form.videoUrl ? 'border-emerald-500 bg-emerald-50' : 'border-slate-200 group-hover:border-blue-900'}`}>
+                                        {form.videoUrl ? (
+                                            <div className="w-full">
+                                                <video src={`${import.meta.env.VITE_API_URL}${form.videoUrl}`} controls className="w-full rounded-xl max-h-40" />
+                                                <button type="button" onClick={() => setForm(f => ({...f, videoUrl: ''}))} className="mt-2 text-xs text-red-500 font-bold hover:underline">Remove video</button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                {uploadingVideo ? <Loader2 className="animate-spin text-blue-900 mb-2" size={28} /> : <Video className="text-slate-300 mb-2" size={32} />}
+                                                <p className="text-sm font-bold text-slate-500">{uploadingVideo ? 'Uploading...' : 'Click to upload video'}</p>
+                                                <p className="text-xs text-slate-400 mt-1">MP4, MOV — max 5 minutes</p>
+                                            </>
+                                        )}
+                                        {!form.videoUrl && (
+                                            <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleVideoUpload} accept="video/*" disabled={uploadingVideo} />
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
                             <button 
                                 type="submit"
-                                disabled={uploading}
+                                disabled={uploading || uploadingVideo}
                                 className="w-full py-4 rounded-xl bg-blue-900 text-white font-bold hover:bg-blue-800 transition-all shadow-lg shadow-blue-900/20 disabled:opacity-50"
                             >
                                 Submit for Admin Approval
@@ -331,6 +389,11 @@ const CoachingAds = () => {
                         <div key={ad._id} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden group hover:shadow-md transition-all">
                             <div className="aspect-video relative overflow-hidden">
                                 <img src={`${import.meta.env.VITE_API_URL}${ad.imageUrl}`} alt={ad.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                {ad.videoUrl && (
+                                    <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1">
+                                        <Video size={10} /> Video
+                                    </div>
+                                )}
                                 <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border backdrop-blur-md ${getStatusStyle(ad.status)}`}>
                                     {ad.status === 'active' ? 'Active' : ad.status}
                                 </div>
@@ -403,6 +466,39 @@ const CoachingAds = () => {
                     </div>
                 )}
             </div>
+
+            {/* FAQ Section */}
+            {(() => {
+                const faqs = [
+                    { q: 'How long can my institute video be?', a: 'You can upload a video of up to 5 minutes showcasing your institute, faculty, facilities, or results.' },
+                    { q: 'What video formats are supported?', a: 'We support MP4 and MOV formats. The file size limit is 150MB.' },
+                    { q: 'How long does admin approval take?', a: 'Ads are typically reviewed within 24–48 hours after payment is confirmed.' },
+                    { q: 'Can I edit my ad after submission?', a: 'Currently you can delete and re-create an ad. Editing existing ads will be available soon.' },
+                    { q: 'What happens when my ad duration expires?', a: 'Your ad will automatically move to "expired" status and stop showing to students. You can create a new ad to continue.' },
+                    { q: 'Is the payment refundable?', a: 'Payments are non-refundable once the ad is approved and goes live. Please review our Refund Policy for details.' },
+                ];
+                return (
+                    <div className="mt-12 bg-white rounded-2xl border border-slate-100 shadow-sm p-6 md:p-8">
+                        <h3 className="text-xl font-black text-slate-900 mb-6">Frequently Asked Questions</h3>
+                        <div className="space-y-3">
+                            {faqs.map((faq, i) => (
+                                <div key={i} className="border border-slate-100 rounded-xl overflow-hidden">
+                                    <button
+                                        className="w-full flex items-center justify-between px-5 py-4 text-left font-bold text-slate-800 hover:bg-slate-50 transition-colors"
+                                        onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                                    >
+                                        <span>{faq.q}</span>
+                                        {openFaq === i ? <ChevronUp size={18} className="text-blue-900 shrink-0" /> : <ChevronDown size={18} className="text-slate-400 shrink-0" />}
+                                    </button>
+                                    {openFaq === i && (
+                                        <div className="px-5 pb-4 text-slate-500 text-sm leading-relaxed border-t border-slate-50">{faq.a}</div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })()}
         </div>
     );
 };

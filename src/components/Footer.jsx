@@ -45,7 +45,7 @@ const Footer = () => {
                     </div>
                 </div>
                 <div className="border-t border-blue-800 pt-6 flex flex-col md:flex-row justify-between items-center gap-3 text-sm">
-                    <p>© 2026 IIT-NEET.com — Made by <a href="https://digicoders.in/" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-white transition-colors font-bold">#digicoders</a></p>
+                    <p><span className="text-white font-semibold">&copy;</span> 2026 IIT-NEET.com — Made by <a href="https://digicoders.in/" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-white transition-colors font-bold">#digicoders</a></p>
                     <div className="flex gap-6">
                         <Link to="/tutors" className="hover:text-amber-400 transition-colors">Tutors</Link>
                         <Link to="/coachings" className="hover:text-amber-400 transition-colors">Institutes</Link>
