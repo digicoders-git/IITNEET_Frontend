@@ -57,50 +57,58 @@ const AdvertisingPage = () => {
 
     const plans = [
         {
-            name: "Basic Growth",
-            price: "₹1,999",
-            period: "per month",
-            description: "Perfect for local coaching centers starting their digital journey.",
+            name: "For Students",
+            price: "₹200",
+            period: "per two contacts",
+            validity: "Unlimited Validity",
+            description: "Access hidden tutor contact numbers and connect directly with the best tutors near you.",
             features: [
-                "Profile Listing in Search",
-                "Basic Contact Details",
-                "Up to 5 Course Listings",
-                "Basic Analytics",
-                "Email Support"
+                "Access 2 hidden tutor contacts",
+                "Unlimited validity — never expires",
+                "Search verified tutors",
+                "Filter by subject & location",
+                "Instant contact unlock"
             ],
-            recommended: false
+            color: "blue",
+            icon: "🎓",
+            recommended: false,
+            cta: "/register"
         },
         {
-            name: "Premium Visibility",
-            price: "₹4,999",
-            period: "per month",
-            description: "Maximize your reach with priority placement and advanced features.",
+            name: "For Tutors",
+            price: "₹500",
+            period: "per year",
+            validity: "Renewal after one year",
+            description: "Get your profile listed publicly and connect with thousands of students looking for tutors.",
             features: [
-                "Priority Search Ranking",
-                "Verified Badge",
-                "Unlimited Course Listings",
-                "Advanced Student Analytics",
-                "Direct Lead Notifications",
-                "Social Media Promotion",
-                "Priority Support"
+                "Public profile listing",
+                "Appear in tutor search results",
+                "Receive student inquiries",
+                "1 year active membership",
+                "Re-activate within 15 days of expiry"
             ],
-            recommended: true
+            color: "amber",
+            icon: "📚",
+            recommended: true,
+            cta: "/register?role=tutor"
         },
         {
-            name: "Institutional Elite",
-            price: "₹9,999",
-            period: "per month",
-            description: "The ultimate solution for established institutes seeking market dominance.",
+            name: "For Advertisers",
+            price: "₹2000",
+            period: "per year",
+            validity: "Renewal after one year",
+            description: "Showcase your coaching institute to thousands of IIT-JEE & NEET aspirants across India.",
             features: [
-                "Homepage Featured Slot",
-                "Full Page Ad Placement",
-                "Exclusive Branding Rights",
-                "Monthly Performance Reports",
-                "Dedicated Account Manager",
-                "Custom Email Campaigns",
-                "Webinar Hosting Rights"
+                "Full advertising page",
+                "Appear on homepage carousel",
+                "1 year public visibility",
+                "Social media links display",
+                "Re-activate within 15 days of expiry"
             ],
-            recommended: false
+            color: "indigo",
+            icon: "🏫",
+            recommended: false,
+            cta: "/register?role=coaching"
         }
     ];
 
@@ -342,6 +350,87 @@ const AdvertisingPage = () => {
                                 <div className="text-blue-300 font-bold uppercase tracking-widest text-xs mt-1">Mumbai, India</div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Pricing Plans Section */}
+            <section id="plans" className="py-24 bg-slate-50">
+                <div className="page-container">
+                    <div className="text-center mb-16">
+                        <p className="text-amber-500 font-bold uppercase tracking-widest text-sm mb-3">Transparent Pricing</p>
+                        <h2 className="text-4xl font-black text-blue-900 uppercase tracking-tight mb-4">Our Prices</h2>
+                        <p className="text-gray-500 font-medium">All prices are inclusive of GST</p>
+                        <div className="w-20 h-1.5 bg-amber-500 mx-auto rounded-full mt-6"></div>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                        {plans.map((plan, i) => (
+                            <div
+                                key={i}
+                                className={`relative bg-white rounded-[2.5rem] border-2 flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${
+                                    plan.recommended
+                                        ? 'border-amber-400 shadow-xl shadow-amber-100'
+                                        : 'border-gray-100 shadow-lg'
+                                }`}
+                            >
+                                {plan.recommended && (
+                                    <div className="bg-amber-500 text-white text-xs font-black uppercase tracking-widest text-center py-2.5 px-4">
+                                        ⭐ Most Popular
+                                    </div>
+                                )}
+
+                                <div className={`px-8 pt-10 pb-8 ${
+                                    plan.recommended ? 'bg-gradient-to-br from-blue-900 to-indigo-900' : 'bg-white'
+                                }`}>
+                                    <div className="text-4xl mb-4">{plan.icon}</div>
+                                    <h3 className={`text-2xl font-black mb-2 ${
+                                        plan.recommended ? 'text-white' : 'text-blue-900'
+                                    }`}>{plan.name}</h3>
+                                    <p className={`text-sm leading-relaxed mb-6 ${
+                                        plan.recommended ? 'text-blue-200' : 'text-gray-500'
+                                    }`}>{plan.description}</p>
+
+                                    <div className="flex items-end gap-2 mb-1">
+                                        <span className={`text-5xl font-black ${
+                                            plan.recommended ? 'text-amber-400' : 'text-blue-900'
+                                        }`}>{plan.price}</span>
+                                    </div>
+                                    <p className={`text-sm font-semibold ${
+                                        plan.recommended ? 'text-blue-300' : 'text-gray-400'
+                                    }`}>{plan.period}</p>
+                                    <div className={`inline-block mt-3 text-xs font-bold px-3 py-1 rounded-full ${
+                                        plan.recommended
+                                            ? 'bg-white/20 text-white'
+                                            : 'bg-blue-50 text-blue-700'
+                                    }`}>
+                                        🕐 {plan.validity}
+                                    </div>
+                                </div>
+
+                                <div className="px-8 py-6 flex flex-col flex-1">
+                                    <ul className="space-y-3 mb-8 flex-1">
+                                        {plan.features.map((f, j) => (
+                                            <li key={j} className="flex items-start gap-3 text-sm text-gray-600">
+                                                <CheckCircle size={17} className="text-green-500 mt-0.5 shrink-0" />
+                                                {f}
+                                            </li>
+                                        ))}
+                                    </ul>
+
+                                    <Link
+                                        to={plan.cta}
+                                        className={`w-full text-center py-4 rounded-2xl font-black text-sm uppercase tracking-wider transition-all hover:scale-105 ${
+                                            plan.recommended
+                                                ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-200'
+                                                : 'bg-blue-900 hover:bg-blue-800 text-white'
+                                        }`}
+                                    >
+                                        Get Started
+                                    </Link>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>
