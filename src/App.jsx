@@ -31,6 +31,7 @@ import Pricing from './pages/public/Pricing';
 import RefundPolicy from './pages/public/RefundPolicy';
 import TermsAndConditions from './pages/public/TermsAndConditions';
 import PrivacyPolicy from './pages/public/PrivacyPolicy';
+import FAQ from './pages/public/FAQ';
 import FloatingCTA from './components/FloatingCTA';
 
 
@@ -77,6 +78,7 @@ const AppContent = () => {
                 <Route path="/refund-policy" element={<RefundPolicy />} />
                 <Route path="/terms" element={<TermsAndConditions />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/faq" element={<FAQ />} />
 
                 {/* Admin Routes */}
                 <Route path="/admin/*" element={

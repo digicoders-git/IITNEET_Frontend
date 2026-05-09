@@ -7,9 +7,9 @@ import Footer from '../components/Footer';
 import { ChevronRight, GraduationCap, Building2, Users } from 'lucide-react';
 
 const ROLES = [
-    { value: 'student', label: 'Student', desc: 'Find tutors & institutes', icon: Users },
+    { value: 'student', label: 'Student', desc: 'Find tutors & advertisers', icon: Users },
     { value: 'tutor', label: 'Tutor', desc: 'Offer your expertise', icon: GraduationCap },
-    { value: 'coaching', label: 'Coaching Institute', desc: 'List your institute', icon: Building2 },
+    { value: 'coaching', label: 'Advertiser', desc: 'List as advertiser', icon: Building2 },
 ];
 
 const Register = () => {
@@ -46,10 +46,10 @@ const Register = () => {
                         <div className="mb-8 text-center">
                             <img
                                 src="/logo.png"
-                                alt="IIT-NEET.com Logo"
+                                alt="iitneet.com Logo"
                                 className="h-12 w-auto mx-auto mb-6"
                             />
-                            <h1 className="text-3xl font-bold text-blue-900 mb-2">Create Account</h1>
+                            <h1 className="text-3xl font-bold text-blue-900 mb-2">Join iitneet.com Today</h1>
                             <p className="text-gray-500">Join thousands of students and educators</p>
                         </div>
 
@@ -62,14 +62,14 @@ const Register = () => {
                         <form onSubmit={handleSubmit} className="space-y-5">
                             {/* Role Selector */}
                             <div>
-                                <label className="text-sm font-bold text-blue-900 mb-2 block">Join us as...</label>
+                                <label className="text-sm font-bold text-blue-900 mb-2 block">Join us...</label>
                                 <div className="grid grid-cols-3 gap-2">
                                     {ROLES.map(role => (
                                         <button key={role.value} type="button"
                                             onClick={() => setFormData(f => ({ ...f, role: role.value }))}
                                             className={`p-3 border-2 text-center transition-all ${formData.role === role.value ? 'border-blue-900 bg-blue-900 text-white' : 'border-gray-200 bg-white text-gray-600 hover:border-blue-900'}`}>
                                             <role.icon size={20} className="mx-auto mb-1" />
-                                            <p className="text-xs font-bold">{role.label}</p>
+                                            <p className="text-xs font-bold">as {role.label}</p>
                                         </button>
                                     ))}
                                 </div>

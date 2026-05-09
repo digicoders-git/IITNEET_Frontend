@@ -6,7 +6,7 @@ import { Save, Camera, MapPin, Phone } from 'lucide-react';
 const CLASSES = ['KG','Class I','Class II','Class III','Class IV','Class V','Class VI','Class VII','Class VIII','Class IX','Class X','Class XI','Class XII','Class XI & XII - Foundation','IIT-JEE','IIT & NEET','NEET','BSc.','MSc.','BCA','BBA','MBA','NDA','CSAT','Banking','Other'];
 const SUBJECTS = ['English Language','Physics','Chemistry','Mathematics','Biology','History','Geography','Accountancy','Psychology','Sociology','Political Science','Economics','Business Studies','Computer Science','Biotechnology','Sangeet','Data Interpretation & Logical Reasoning','Quantitative Aptitude','CSAT','Other'];
 const QUALIFICATIONS = ['10th Pass','12th Pass','Diploma','B.A.','B.Sc.','B.Com','B.Tech / B.E.','BCA','BBA','M.A.','M.Sc.','M.Com','M.Tech / M.E.','MCA','MBA','Ph.D.','Other'];
-const FEES_OPTIONS = [2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000];
+const FEES_OPTIONS = [2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000,16000,17000,18000,19000,20000];
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 const SectionBox = ({ title, children }) => (
@@ -33,9 +33,9 @@ const TutorProfile = () => {
     const fileRef = useRef();
     const [form, setForm] = useState({
         firstName: '', lastName: '',
-        age: '', sex: '', qualification: '',
-        teachingClass: '', subjectType: 'choose', subjects: [],
-        competitiveExpert: false, expertSubject: '',
+        age: '', sex: '', qualification: '', otherQualification: '',
+        teachingClass: '', otherClass: '', subjectType: 'choose', subjects: [], otherSubject: '',
+        competitiveExpert: false, expertSubject: '', otherExpertSubject: '',
         fees: '', feesType: '3days',
         availability: 'both',
         schedule: {
@@ -72,11 +72,15 @@ const TutorProfile = () => {
                     age: profile.age || '',
                     sex: profile.sex || '',
                     qualification: profile.qualification || '',
+                    otherQualification: profile.otherQualification || '',
                     teachingClass: profile.teachingClass || '',
+                    otherClass: profile.otherClass || '',
                     subjectType: profile.subjectType || 'choose',
                     subjects: profile.subjects || [],
+                    otherSubject: profile.otherSubject || '',
                     competitiveExpert: profile.competitiveExpert || false,
                     expertSubject: profile.expertSubject || '',
+                    otherExpertSubject: profile.otherExpertSubject || '',
                     fees: profile.fees || '',
                     feesType: profile.feesType || '3days',
                     availability: profile.availability || 'both',
@@ -102,17 +106,48 @@ const TutorProfile = () => {
     const handlePhotoChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+        
+        // Validate file size (2MB)
+        if (file.size > 10 * 1024 * 1024) {
+            setMsg({ text: 'File too large. Maximum size is 10MB', ok: false });
+            return;
+        }
+        
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            setMsg({ text: 'Please select an image file (JPG, PNG, etc.)', ok: false });
+            return;
+        }
+        
         setUploading(true);
+        setMsg({ text: '', ok: true });
+        
         const data = new FormData();
         data.append('photo', file);
+        
         try {
-            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/profiles/upload-photo`, data, {
-                headers: { Authorization: `Bearer ${user?.token}`, 'Content-Type': 'multipart/form-data' }
-            });
+            console.log('Uploading photo...', file.name, file.size);
+            const res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/api/profiles/upload-photo`, 
+                data, 
+                {
+                    headers: { 
+                        Authorization: `Bearer ${user?.token}`
+                    }
+                }
+            );
+            console.log('Upload response:', res.data);
             setPhotoUrl(`${import.meta.env.VITE_API_URL}${res.data.imageUrl}`);
             setMsg({ text: 'Photo uploaded successfully!', ok: true });
-        } catch { setMsg({ text: 'Photo upload failed', ok: false }); }
-        finally { setUploading(false); }
+        } catch (err) {
+            console.error('Upload error:', err);
+            const errorMsg = err.response?.data?.message || err.message || 'Photo upload failed';
+            setMsg({ text: errorMsg, ok: false });
+        } finally { 
+            setUploading(false);
+            // Clear file input
+            if (fileRef.current) fileRef.current.value = '';
+        }
     };
 
     const toggleSubject = (s) => {
@@ -200,7 +235,7 @@ const TutorProfile = () => {
                             </button>
                             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
                         </div>
-                        <p className="text-xs text-gray-400 text-center">Max 2MB · JPG/PNG</p>
+                        <p className="text-xs text-gray-400 text-center">Max 10MB · JPG/PNG</p>
                     </div>
 
                     {/* Name + Basic */}
@@ -238,6 +273,10 @@ const TutorProfile = () => {
                                     <option value="">Select</option>
                                     {QUALIFICATIONS.map(q => <option key={q}>{q}</option>)}
                                 </select>
+                                {form.qualification === 'Other' && (
+                                    <input className="input-field mt-2" placeholder="Please specify qualification"
+                                        value={form.otherQualification} onChange={e => setForm(f => ({ ...f, otherQualification: e.target.value }))} />
+                                )}
                             </div>
                         </div>
                     </div>
@@ -250,6 +289,10 @@ const TutorProfile = () => {
                     <option value="">Select Class / Standard / Level</option>
                     {CLASSES.map(c => <option key={c}>{c}</option>)}
                 </select>
+                {form.teachingClass === 'Other' && (
+                    <input className="input-field mt-3" placeholder="Please specify class/level"
+                        value={form.otherClass} onChange={e => setForm(f => ({ ...f, otherClass: e.target.value }))} />
+                )}
             </SectionBox>
 
             {/* ── 3. TEACHING SUBJECTS ── */}
@@ -270,6 +313,13 @@ const TutorProfile = () => {
                                 {s}
                             </button>
                         ))}
+                    </div>
+                )}
+                {form.subjectType === 'choose' && (form.subjects || []).includes('Other') && (
+                    <div className="mt-3">
+                        <Label>Please specify other subjects</Label>
+                        <input className="input-field" placeholder="E.g. Yoga, Music, etc."
+                            value={form.otherSubject} onChange={e => setForm(f => ({ ...f, otherSubject: e.target.value }))} />
                     </div>
                 )}
                 {form.subjectType === 'choose' && form.subjects.length > 0 && (
@@ -295,6 +345,10 @@ const TutorProfile = () => {
                             <option value="">Select Subject</option>
                             {SUBJECTS.map(s => <option key={s}>{s}</option>)}
                         </select>
+                        {form.expertSubject === 'Other' && (
+                            <input className="input-field mt-2" placeholder="Please specify subject"
+                                value={form.otherExpertSubject} onChange={e => setForm(f => ({ ...f, otherExpertSubject: e.target.value }))} />
+                        )}
                     </div>
                 )}
             </SectionBox>
@@ -314,8 +368,8 @@ const TutorProfile = () => {
                                     setForm(f => {
                                         let newFees = f.fees;
                                         if (o.v === 'discuss') newFees = '';
-                                        else if (o.v === '3days' && newFees > 6000) newFees = 6000;
-                                        else if (o.v === '6days' && newFees > 12000) newFees = 12000;
+                                        else if (o.v === '3days' && newFees > 10000) newFees = 10000;
+                                        else if (o.v === '6days' && newFees > 20000) newFees = 20000;
                                         return { ...f, feesType: o.v, fees: newFees };
                                     });
                                 }} label={o.l} />
@@ -326,7 +380,7 @@ const TutorProfile = () => {
                     <div>
                         <Label>Select Monthly Fees Amount</Label>
                         <div className="flex flex-wrap gap-2">
-                            {FEES_OPTIONS.filter(f => form.feesType === '3days' ? f <= 6000 : f <= 12000).map(fee => (
+                            {FEES_OPTIONS.filter(f => form.feesType === '3days' ? f <= 10000 : f <= 20000).map(fee => (
                                 <button key={fee} type="button" onClick={() => setForm(f => ({ ...f, fees: fee }))}
                                     className={`text-sm font-bold px-4 py-2 border-2 transition-all ${form.fees == fee ? 'bg-blue-900 text-white border-blue-900' : 'bg-white text-gray-700 border-gray-300 hover:border-blue-900'}`}>
                                     ₹{fee.toLocaleString()}
@@ -391,6 +445,7 @@ const TutorProfile = () => {
                                                 disabled={!form.schedule[day]?.available}>
                                                 <option>Morning</option>
                                                 <option>Evening</option>
+                                                <option>Anytime</option>
                                             </select>
                                         </td>
                                         <td className="border border-gray-300 px-3 py-2">

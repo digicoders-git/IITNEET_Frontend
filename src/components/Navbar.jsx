@@ -1,23 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 
 const Navbar = () => {
     const { user, logout } = useAuth();
     const location = useLocation();
     const [menuOpen, setMenuOpen] = useState(false);
+    const [helpOpen, setHelpOpen] = useState(false);
+    const helpRef = useRef(null);
 
     const navLinks = [
         { to: '/', label: 'Home' },
         { to: '/register?role=tutor', label: 'Become a Tutor' },
         { to: '/tutors', label: 'Tutors' },
-        { to: '/coachings', label: 'Coaching Institutes' },
+        { to: '/coachings', label: 'Coaching Institute' },
         { to: '/advertising', label: 'Advertising' },
-        { to: '/contact', label: 'Help' },
+        { to: '/pricing', label: 'Pricing' },
+    ];
+
+    const helpLinks = [
+        { to: '/contact', label: 'Contact Us' },
+        { to: '/faq', label: 'FAQ' },
     ];
 
     const isActive = (path) => location.pathname === path || (path !== '/' && location.pathname.startsWith(path.split('?')[0]));
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (helpRef.current && !helpRef.current.contains(event.target)) {
+                setHelpOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     return (
         <nav className="fixed top-0 w-full z-50 bg-blue-900 border-b-4 border-amber-500">
@@ -26,7 +43,7 @@ const Navbar = () => {
                 <Link to="/" className="flex items-center gap-2">
                     <img
                         src="/logo.png"
-                        alt="IIT-NEET.com Logo"
+                        alt="iitneet.com Logo"
                         className="h-8 w-auto brightness-0 invert"
                     />
                 </Link>
@@ -39,6 +56,30 @@ const Navbar = () => {
                             {link.label}
                         </Link>
                     ))}
+                    
+                    {/* Help Dropdown */}
+                    <div className="relative" ref={helpRef}>
+                        <button 
+                            onClick={() => setHelpOpen(!helpOpen)}
+                            className={`px-3 py-2 flex items-center gap-1 transition-colors ${helpLinks.some(l => isActive(l.to)) ? 'text-amber-400 border-b-2 border-amber-400' : 'text-white hover:text-amber-400'}`}
+                        >
+                            Help <ChevronDown size={14} className={`transition-transform ${helpOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                        {helpOpen && (
+                            <div className="absolute right-0 mt-1 w-40 bg-white shadow-xl border border-gray-100 py-2 z-[60]">
+                                {helpLinks.map(link => (
+                                    <Link 
+                                        key={link.to} 
+                                        to={link.to} 
+                                        onClick={() => setHelpOpen(false)}
+                                        className={`block px-4 py-2 text-sm ${isActive(link.to) ? 'text-blue-900 bg-blue-50 font-bold' : 'text-gray-700 hover:bg-gray-50'}`}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Auth Buttons */}
@@ -84,6 +125,18 @@ const Navbar = () => {
                             {link.label}
                         </Link>
                     ))}
+                    
+                    {/* Mobile Help Section */}
+                    <div className="py-2 border-b border-blue-800">
+                        <p className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-2">Help & Support</p>
+                        {helpLinks.map(link => (
+                            <Link key={link.to} to={link.to} onClick={() => setMenuOpen(false)}
+                                className={`block text-sm font-semibold py-2 ${isActive(link.to) ? 'text-amber-400' : 'text-blue-100'}`}>
+                                {link.label}
+                            </Link>
+                        ))}
+                    </div>
+
                     <div className="pt-3 flex flex-col gap-2">
                         {user ? (
                             <>
@@ -93,7 +146,7 @@ const Navbar = () => {
                                 </Link>
                                 <button onClick={() => { logout(); setMenuOpen(false); }}
                                     className="text-sm font-semibold text-blue-200 py-2">Logout</button>
-                            </>
+                                </>
                         ) : (
                             <>
                                 <Link to="/login" onClick={() => setMenuOpen(false)}

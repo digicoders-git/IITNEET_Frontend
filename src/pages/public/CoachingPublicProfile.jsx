@@ -45,9 +45,12 @@ const CoachingPublicProfile = () => {
                     </Link>
                     <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                         <img
-                            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(coaching.name)}&size=100&background=e0e7ff&color=3730a3&bold=true&rounded=true`}
+                            src={profile?.instituteImage 
+                                ? `${import.meta.env.VITE_API_URL}${profile.instituteImage}`
+                                : `https://ui-avatars.com/api/?name=${encodeURIComponent(coaching.name)}&size=100&background=e0e7ff&color=3730a3&bold=true&rounded=true`
+                            }
                             alt={coaching.name}
-                            className="w-20 h-20 rounded-2xl border-4 border-white/20 shadow-xl"
+                            className="w-20 h-20 rounded-2xl border-4 border-white/20 shadow-xl object-cover"
                         />
                         <div>
                             <div className="flex flex-wrap items-center gap-3 mb-2">
@@ -74,6 +77,17 @@ const CoachingPublicProfile = () => {
             </div>
 
             <div className="page-container py-8 max-w-5xl">
+                {/* Institute Image - Full Width */}
+                {profile?.instituteImage && (
+                    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-8">
+                        <img 
+                            src={`${import.meta.env.VITE_API_URL}${profile.instituteImage}`}
+                            alt={coaching.name}
+                            className="w-full h-96 object-cover"
+                        />
+                    </div>
+                )}
+
                 <div className="grid lg:grid-cols-3 gap-8">
                     <div className="lg:col-span-2 space-y-6">
                         {/* About */}

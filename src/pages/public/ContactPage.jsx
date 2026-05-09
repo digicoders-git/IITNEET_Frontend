@@ -30,7 +30,7 @@ const ContactPage = () => {
             {/* Header */}
             <div className="bg-blue-900 pt-20 border-b-4 border-amber-500">
                 <div className="page-container py-12 text-center">
-                    <h1 className="text-3xl font-bold text-white mb-2">Help & Contact Us</h1>
+                    <h1 className="text-3xl font-bold text-white mb-2">Contact Us</h1>
                     <p className="text-blue-300">Have a question? We're here to help you.</p>
                 </div>
             </div>

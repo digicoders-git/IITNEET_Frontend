@@ -46,8 +46,8 @@ const CoachingListing = () => {
     const [page, setPage] = useState(1);
     const [pages, setPages] = useState(1);
     const [showFilters, setShowFilters] = useState(false);
-    const [filters, setFilters] = useState({ search: '', location: '', course: '' });
-    const [applied, setApplied] = useState({ search: '', location: '', course: '' });
+    const [filters, setFilters] = useState({ search: '', location: '', course: '', pincode: '' });
+    const [applied, setApplied] = useState({ search: '', location: '', course: '', pincode: '' });
 
     const fetchCoachings = useCallback(async (f, p = 1) => {
         setLoading(true);
@@ -66,10 +66,10 @@ const CoachingListing = () => {
 
     const handleApply = () => { setPage(1); setApplied({ ...filters }); setShowFilters(false); };
     const handleClear = () => {
-        const e = { search: '', location: '', course: '' };
+        const e = { search: '', location: '', course: '', pincode: '' };
         setFilters(e); setApplied(e); setPage(1);
     };
-    const activeFilterCount = [applied.location, applied.course].filter(Boolean).length;
+    const activeFilterCount = [applied.location, applied.course, applied.pincode].filter(Boolean).length;
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -78,25 +78,58 @@ const CoachingListing = () => {
             {/* Header */}
             <div className="bg-blue-900 pt-20 border-b-4 border-amber-500">
                 <div className="page-container py-10">
-                    <h1 className="text-3xl font-bold text-white mb-1">Coaching Institutes</h1>
+                    <h1 className="text-3xl font-bold text-white mb-1">Advertisers</h1>
                     <p className="text-blue-300 text-sm">
-                        {loading ? 'Searching...' : `${total} institutes listed`}
+                        {loading ? 'Searching...' : `${total} advertisers listed`}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3 mt-6 max-w-2xl">
                         <div className="relative flex-1">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                            <select
+                                className="w-full pl-11 pr-4 py-3 bg-white text-gray-800 outline-none border-2 border-white focus:border-amber-400 appearance-none"
+                                value={filters.search}
+                                onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}>
+                                <option value="">All Subjects</option>
+                                <option value="Physics">Physics</option>
+                                <option value="Chemistry">Chemistry</option>
+                                <option value="Biology">Biology</option>
+                                <option value="Mathematics">Mathematics</option>
+                                <option value="English Language">English Language</option>
+                                <option value="History">History</option>
+                                <option value="Geography">Geography</option>
+                                <option value="Accountancy">Accountancy</option>
+                                <option value="Psychology">Psychology</option>
+                                <option value="Sociology">Sociology</option>
+                                <option value="Political Science">Political Science</option>
+                                <option value="Economics">Economics</option>
+                                <option value="Business Studies">Business Studies</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Biotechnology">Biotechnology</option>
+                            </select>
+                        </div>
+                        <div className="relative flex-1">
+                            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                             <input
                                 className="w-full pl-11 pr-4 py-3 bg-white text-gray-800 outline-none border-2 border-white focus:border-amber-400 placeholder:text-gray-400"
-                                placeholder="Search institutes or courses..."
-                                value={filters.search}
-                                onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
+                                placeholder="City..."
+                                value={filters.location}
+                                onChange={e => setFilters(f => ({ ...f, location: e.target.value }))}
+                                onKeyDown={e => e.key === 'Enter' && handleApply()}
+                            />
+                        </div>
+                        <div className="relative flex-1">
+                            <input
+                                className="w-full px-4 py-3 bg-white text-gray-800 outline-none border-2 border-white focus:border-amber-400 placeholder:text-gray-400"
+                                placeholder="Pincode..."
+                                value={filters.pincode}
+                                onChange={e => setFilters(f => ({ ...f, pincode: e.target.value }))}
                                 onKeyDown={e => e.key === 'Enter' && handleApply()}
                             />
                         </div>
                         <button onClick={() => setShowFilters(!showFilters)}
                             className={`flex items-center gap-2 px-5 py-3 font-semibold text-sm transition-all border-2 ${showFilters || activeFilterCount > 0 ? 'bg-amber-500 text-white border-amber-500' : 'bg-transparent text-white border-white hover:bg-blue-800'}`}>
                             <SlidersHorizontal size={16} />
-                            Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
+                            More
                         </button>
                         <button onClick={handleApply} className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 transition-all">
                             Search
@@ -110,14 +143,6 @@ const CoachingListing = () => {
                 {showFilters && (
                     <div className="bg-white border-2 border-gray-200 p-6 mb-6">
                         <div className="grid md:grid-cols-2 gap-5">
-                            <div>
-                                <label className="text-sm font-bold text-blue-900 mb-2 block">Location</label>
-                                <div className="relative">
-                                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
-                                    <input className="input-field pl-10" placeholder="City or area..."
-                                        value={filters.location} onChange={e => setFilters(f => ({ ...f, location: e.target.value }))} />
-                                </div>
-                            </div>
                             <div>
                                 <label className="text-sm font-bold text-blue-900 mb-2 block">Category</label>
                                 <select className="input-field" value={filters.course}
@@ -148,6 +173,12 @@ const CoachingListing = () => {
                                 <button onClick={() => { setApplied(a => ({ ...a, location: '' })); setFilters(f => ({ ...f, location: '' })); }}><X size={12} /></button>
                             </span>
                         )}
+                        {applied.pincode && (
+                            <span className="bg-blue-100 text-blue-900 text-xs font-bold px-3 py-1.5 flex items-center gap-1 border border-blue-200">
+                                📮 {applied.pincode}
+                                <button onClick={() => { setApplied(a => ({ ...a, pincode: '' })); setFilters(f => ({ ...f, pincode: '' })); }}><X size={12} /></button>
+                            </span>
+                        )}
                         {applied.course && (
                             <span className="bg-blue-100 text-blue-900 text-xs font-bold px-3 py-1.5 flex items-center gap-1 border border-blue-200">
                                 {applied.course}
@@ -172,7 +203,7 @@ const CoachingListing = () => {
                 ) : coachings.length === 0 ? (
                     <div className="text-center py-20 bg-white border-2 border-gray-200">
                         <Building2 size={48} className="mx-auto text-gray-300 mb-4" />
-                        <p className="text-blue-900 font-bold text-lg mb-1">No institutes found</p>
+                        <p className="text-blue-900 font-bold text-lg mb-1">No advertisers found</p>
                         <p className="text-gray-400 text-sm">Try adjusting your filters</p>
                         <button onClick={handleClear} className="mt-4 btn btn-outline px-6">Clear Filters</button>
                     </div>

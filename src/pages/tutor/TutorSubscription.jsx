@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import {
     CheckCircle2, Clock, AlertCircle, CreditCard, BookOpen,
-    CalendarCheck, RefreshCw, Users, IndianRupee, ShieldCheck, Loader2
+    CalendarCheck, RefreshCw, Users, IndianRupee, ShieldCheck, Loader2, X
 } from 'lucide-react';
 
 const TutorSubscription = () => {
@@ -12,6 +12,7 @@ const TutorSubscription = () => {
     const [currentSub, setCurrentSub] = useState(null);
     const [loading, setLoading] = useState(true);
     const [purchasing, setPurchasing] = useState(false);
+    const [showApprovalModal, setShowApprovalModal] = useState(false);
 
     const token = user?.token;
 
@@ -44,6 +45,10 @@ const TutorSubscription = () => {
     }, [token]);
 
     const handlePurchase = async (planId = null, price = TUTOR_PLAN.price, name = TUTOR_PLAN.name, duration = TUTOR_PLAN.duration) => {
+        if (!user?.isApproved) {
+            setShowApprovalModal(true);
+            return;
+        }
         setPurchasing(planId || 'default');
         try {
             let orderId, amount, currency, keyId;
@@ -266,6 +271,38 @@ const TutorSubscription = () => {
                                 </div>
                             );
                         })}
+                    </div>
+                </div>
+            )}
+
+            {/* Approval Pending Modal */}
+            {showApprovalModal && (
+                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
+                    <div className="bg-white rounded-[2.5rem] p-10 max-w-md w-full shadow-2xl relative border-4 border-amber-400">
+                        <button 
+                            onClick={() => setShowApprovalModal(false)}
+                            className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-600 transition-colors"
+                        >
+                            <X size={24} />
+                        </button>
+
+                        <div className="text-center">
+                            <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <AlertCircle size={40} className="text-amber-600" />
+                            </div>
+                            <h3 className="text-2xl font-black text-slate-900 mb-4 uppercase tracking-tight">Verification Pending</h3>
+                            <p className="text-slate-500 leading-relaxed font-medium mb-8">
+                                Your account is currently under review by our team. You can activate your membership once your profile has been verified. 
+                                <br/><br/>
+                                <span className="text-blue-900 font-bold italic">Usually takes 24-48 hours.</span>
+                            </p>
+                            <button 
+                                onClick={() => setShowApprovalModal(false)}
+                                className="w-full bg-blue-900 hover:bg-blue-800 text-white font-black py-4 rounded-xl text-sm uppercase tracking-widest transition-all shadow-lg"
+                            >
+                                Got it, I'll wait
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

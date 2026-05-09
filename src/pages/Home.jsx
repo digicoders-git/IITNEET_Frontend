@@ -4,6 +4,7 @@ import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { GraduationCap, Building2, ArrowRight, Star, MapPin, IndianRupee, Search, Users, Award, TrendingUp, CheckCircle, BookOpen, Phone } from 'lucide-react';
+import PricingSection from '../components/PricingSection';
 
 const CLASSES = ['KG', 'Class I', 'Class II', 'Class III', 'Class IV', 'Class V', 'Class VI', 'Class VII', 'Class VIII', 'Class IX', 'Class X', 'Class XI', 'Class XII', 'Class XI & XII - Foundation', 'IIT-JEE', 'IIT & NEET', 'NEET', 'BSc.', 'MSc.', 'BCA', 'BBA', 'MBA', 'NDA', 'CSAT', 'Banking', 'Other'];
 const SUBJECTS = ['English Language', 'Physics', 'Chemistry', 'Mathematics', 'Biology', 'History', 'Geography', 'Accountancy', 'Psychology', 'Sociology', 'Political Science', 'Economics', 'Business Studies', 'Computer Science', 'Biotechnology', 'Sangeet', 'Data Interpretation & Logical Reasoning', 'Quantitative Aptitude', 'CSAT', 'Other'];
@@ -71,11 +72,11 @@ const Home = () => {
                 <div className="page-container text-center max-w-4xl">
                     <p className="text-amber-400 font-semibold text-sm uppercase tracking-widest mb-4">India's Most Trusted IIT-JEE & NEET Platform</p>
                     <h1 className="text-4xl md:text-5xl font-bold text-white mb-5 leading-tight">
-                        Find the Best <span className="text-amber-400">IIT-JEE</span> &amp; <span className="text-amber-400">NEET</span> Tutors<br />
+                        Find the Best <span className="text-amber-400">iitneet</span> &amp; <span className="text-amber-400">NEET</span> Tutors<br />
                         &amp; Coaching Institutes Near You
                     </h1>
                     <p className="text-blue-200 text-lg mb-10 max-w-2xl mx-auto">
-                        Connect with verified home tutors and top coaching institutes for Physics, Chemistry, Biology, Mathematics and more. Start your preparation today.
+                        Connect with verified home tutors and top advertisers for Physics, Chemistry, Biology, Mathematics and more. Start your preparation today.
                     </p>
 
                     {/* Search Form */}
@@ -116,7 +117,7 @@ const Home = () => {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
                         {[
                             { value: '500+', label: 'Expert Tutors', icon: GraduationCap },
-                            { value: '200+', label: 'Coaching Institutes', icon: Building2 },
+                            { value: '200+', label: 'Advertisers', icon: Building2 },
                             { value: '10,000+', label: 'Students Helped', icon: Users },
                             { value: '95%', label: 'Success Rate', icon: TrendingUp },
                         ].map(s => (
@@ -171,8 +172,8 @@ const Home = () => {
                             {
                                 name: 'IIT-JEE', tag: 'Engineering Entrance',
                                 link: '/tutors?subject=Physics',
-                                points: ['JEE Mains & Advanced', 'Physics, Chemistry, Mathematics', 'Expert IIT-JEE Tutors Available'],
-                                desc: 'Crack IIT-JEE with expert tutors specializing in Physics, Chemistry and Mathematics. Get personalized coaching for JEE Mains and Advanced.'
+                                points: ['JEE Mains & Advanced', 'Physics, Chemistry, Mathematics', 'Expert iitneet Tutors Available'],
+                                desc: 'Crack iitneet with expert tutors specializing in Physics, Chemistry and Mathematics. Get personalized coaching for JEE Mains and Advanced.'
                             },
                             {
                                 name: 'NEET', tag: 'Medical Entrance',
@@ -181,16 +182,16 @@ const Home = () => {
                                 desc: 'Prepare for NEET with verified tutors for Biology, Chemistry and Physics. Get into AIIMS and top medical colleges.'
                             },
                             {
-                                name: 'Coaching Institutes', tag: 'Batch Classes',
+                                name: 'Advertisers', tag: 'Batch Classes',
                                 link: '/coachings',
-                                points: ['IIT-JEE & NEET Coaching', 'Batch & Individual Classes', 'Top Rated Institutes Listed'],
-                                desc: 'Find the best IIT-JEE and NEET coaching institutes in your city. Compare fees, faculty, and results.'
+                                points: ['IIT-JEE & NEET Coaching', 'Batch & Individual Classes', 'Top Rated Advertisers Listed'],
+                                desc: 'Find the best IIT-JEE and NEET coaching advertisers in your city. Compare fees, faculty, and results.'
                             },
                         ].map(exam => (
                             <Link key={exam.name} to={exam.link}
                                 className="bg-blue-900 text-white p-8 hover:bg-blue-800 transition-all group border-b-4 border-amber-500">
                                 <span className="text-xs font-bold uppercase tracking-widest bg-amber-500 text-white px-3 py-1">{exam.tag}</span>
-                                <h3 className="text-2xl font-bold mt-4 mb-3 text-white">{exam.name}</h3>
+                                <h3 className="text-2xl font-bold mt-4 mb-3 text-white">iitneet</h3>
                                 <p className="text-blue-200 text-sm mb-4 leading-relaxed">{exam.desc}</p>
                                 <ul className="space-y-2 mb-6">
                                     {exam.points.map(p => (
@@ -268,7 +269,7 @@ const Home = () => {
                                     )}
                                     <div className="flex items-center justify-between mt-auto pt-3 border-t-2 border-gray-100">
                                         {profile.fees ? (
-                                            <p className="font-bold text-blue-900 flex items-center gap-0.5 text-sm">
+                                            <p className="font-bold text-blue-900 flex items-center text-sm">
                                                 <IndianRupee size={13} />{profile.fees}
                                                 <span className="text-gray-400 font-normal text-xs">/mo</span>
                                             </p>
@@ -399,7 +400,7 @@ const Home = () => {
                         <Award size={40} className="text-white mx-auto mb-4" />
                         <h2 className="text-3xl font-bold text-white mb-3">Are You a Teacher or Tutor?</h2>
                         <p className="text-amber-100 text-lg mb-8">
-                            Join IIT-NEET.com and reach thousands of students looking for expert tutors. Register free and get your first year subscription at no cost.
+                            Join iitneet.com and reach thousands of students looking for expert tutors. Register free and get your first year subscription at no cost.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Link to="/register?role=tutor"
@@ -408,7 +409,7 @@ const Home = () => {
                             </Link>
                             <Link to="/register?role=coaching"
                                 className="bg-white hover:bg-gray-100 text-blue-900 font-bold px-8 py-4 transition-all text-center border-2 border-white">
-                                Register Coaching Institute
+                                Register as Advertiser
                             </Link>
                         </div>
                     </div>
@@ -445,12 +446,15 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* ── PRICING ── */}
+            <PricingSection />
+
             {/* ── CTA ── */}
             <section className="py-16 bg-blue-900">
                 <div className="page-container">
                     <div className="max-w-3xl mx-auto text-center">
-                        <h2 className="text-3xl font-bold text-white mb-3">Start Your IIT-JEE / NEET Journey Today</h2>
-                        <p className="text-blue-200 text-lg mb-8">Join 10,000+ students already preparing with top educators on IIT-NEET.com</p>
+                        <h2 className="text-3xl font-bold text-white mb-3">Start Your iitneet / NEET Journey Today</h2>
+                        <p className="text-blue-200 text-lg mb-8">Join 10,000+ students already preparing with top educators on iitneet.com</p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Link to="/register" className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-4 transition-all text-center">
                                 Register Free

@@ -154,7 +154,7 @@ const UserManagement = () => {
                                                                 : 'bg-violet-600 text-white shadow-lg shadow-violet-100 hover:bg-violet-700'}
                                                         `}
                                                     >
-                                                        {u.isApproved ? 'Revoke Approval' : 'Authorize Listing'}
+                                                        {u.isApproved ? 'Deactivate' : 'Approve'}
                                                     </button>
                                                     <button 
                                                         onClick={() => deleteUser(u._id)}

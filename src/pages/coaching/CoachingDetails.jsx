@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
-import { Building2, MapPin, GraduationCap, Plus, Save, FileText, Users, X } from 'lucide-react';
+import { Building2, MapPin, GraduationCap, Plus, Save, FileText, Users, X, Camera } from 'lucide-react';
 
 const CoachingDetails = () => {
     const { user } = useAuth();
+    const fileRef = useRef();
     const [form, setForm] = useState({
         bio: '', location: '', courses: [], facultyDetails: '', phone: ''
     });
     const [courseInput, setCourseInput] = useState('');
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [msg, setMsg] = useState('');
+    const [instituteImage, setInstituteImage] = useState('');
 
     useEffect(() => {
         axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/me`, {
@@ -25,8 +28,47 @@ const CoachingDetails = () => {
                 facultyDetails: profile?.facultyDetails || '',
                 phone: u?.phone || '',
             });
+            if (profile?.instituteImage) {
+                setInstituteImage(`${import.meta.env.VITE_API_URL}${profile.instituteImage}`);
+            }
         }).catch(() => {}).finally(() => setLoading(false));
     }, [user]);
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        if (file.size > 10 * 1024 * 1024) {
+            setMsg('Image too large. Maximum size is 10MB');
+            return;
+        }
+        
+        if (!file.type.startsWith('image/')) {
+            setMsg('Please select an image file');
+            return;
+        }
+        
+        setUploading(true);
+        setMsg('');
+        
+        const data = new FormData();
+        data.append('instituteImage', file);
+        
+        try {
+            const res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/api/profiles/upload-institute-image`,
+                data,
+                { headers: { Authorization: `Bearer ${user?.token}` } }
+            );
+            setInstituteImage(`${import.meta.env.VITE_API_URL}${res.data.imageUrl}`);
+            setMsg('Institute image uploaded successfully!');
+        } catch (err) {
+            setMsg(err.response?.data?.message || 'Image upload failed');
+        } finally {
+            setUploading(false);
+            if (fileRef.current) fileRef.current.value = '';
+        }
+    };
 
     const addCourse = () => {
         const c = courseInput.trim();
@@ -77,6 +119,54 @@ const CoachingDetails = () => {
             )}
 
             <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6">
+                {/* Institute Image */}
+                <div>
+                    <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <Building2 size={18} className="text-violet-600" /> Institute Image
+                    </h4>
+                    <div className="flex flex-col md:flex-row gap-6 items-start">
+                        <div className="relative">
+                            <div className="w-48 h-48 border-2 border-slate-200 rounded-2xl bg-slate-50 overflow-hidden">
+                                {instituteImage ? (
+                                    <img src={instituteImage} alt="Institute" className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                        <Building2 size={48} />
+                                    </div>
+                                )}
+                            </div>
+                            <button
+                                onClick={() => fileRef.current.click()}
+                                disabled={uploading}
+                                className="absolute -bottom-3 -right-3 bg-violet-600 hover:bg-violet-700 text-white p-3 rounded-xl shadow-lg transition-all disabled:opacity-50"
+                            >
+                                {uploading ? (
+                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                    <Camera size={20} />
+                                )}
+                            </button>
+                            <input
+                                ref={fileRef}
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handleImageUpload}
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <p className="text-sm text-slate-600 mb-2">
+                                Upload a professional image of your institute building, classroom, or logo.
+                            </p>
+                            <ul className="text-xs text-slate-500 space-y-1">
+                                <li>• Maximum file size: 10MB</li>
+                                <li>• Supported formats: JPG, PNG, WEBP</li>
+                                <li>• Recommended size: 800x800 pixels</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Basic Info */}
                 <div>
                     <h4 className="font-bold text-slate-800 mb-4 flex items-center gap-2">

@@ -153,9 +153,9 @@ const TutorPublicProfile = () => {
                         {/* Monthly Fees (Desktop) */}
                         <div className="hidden lg:block shrink-0 bg-blue-50 border-2 border-blue-100 p-8 rounded-3xl text-center">
                             <p className="text-blue-400 text-[10px] font-black uppercase tracking-widest mb-1">Starting From</p>
-                            <p className="text-4xl font-black text-blue-900 flex items-center justify-center gap-1">
-                                <IndianRupee size={24} /> {profile.fees || 'TBD'}
-                            </p>
+                            <div className="flex items-center text-4xl font-black text-blue-900 justify-center">
+                                <IndianRupee size={24} />{profile.fees || 'TBD'}
+                            </div>
                             <p className="text-[10px] text-blue-400 font-bold uppercase mt-1">Per Month</p>
                         </div>
                     </div>

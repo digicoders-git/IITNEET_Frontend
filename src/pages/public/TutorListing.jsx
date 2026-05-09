@@ -48,7 +48,7 @@ const TutorCard = ({ profile }) => (
             </div>
             <div className="flex items-center justify-between pt-4 border-t-2 border-gray-100">
                 {profile.fees ? (
-                    <p className="font-bold text-blue-900 flex items-center gap-0.5 text-sm">
+                    <p className="font-bold text-blue-900 flex items-center text-sm">
                         <IndianRupee size={13} />{profile.fees}<span className="text-gray-400 font-normal text-xs">/mo</span>
                     </p>
                 ) : <span className="text-gray-400 text-sm">Fees on request</span>}
@@ -74,6 +74,7 @@ const TutorListing = () => {
         subject: searchParams.get('subject') || '',
         teachingClass: searchParams.get('class') || '',
         city: searchParams.get('search') || '',
+        pincode: '',
         experience: ''
     });
     const [applied, setApplied] = useState({
@@ -81,6 +82,7 @@ const TutorListing = () => {
         subject: searchParams.get('subject') || '',
         teachingClass: searchParams.get('class') || '',
         city: searchParams.get('search') || '',
+        pincode: '',
         experience: ''
     });
 
@@ -92,8 +94,8 @@ const TutorListing = () => {
             if (f.subject) params.subject = f.subject;
             if (f.teachingClass) params.teachingClass = f.teachingClass;
             if (f.experience) params.experience = f.experience;
-            // city searches both search (name/bio) and location field
             if (f.city) params.search = f.city;
+            if (f.pincode) params.pincode = f.pincode;
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/tutors`, { params });
             setTutors(res.data.tutors);
             setTotal(res.data.total);
@@ -106,10 +108,10 @@ const TutorListing = () => {
 
     const handleApply = () => { setPage(1); setApplied({ ...filters }); setShowFilters(false); };
     const handleClear = () => {
-        const empty = { search: '', subject: '', teachingClass: '', city: '', experience: '' };
+        const empty = { search: '', subject: '', teachingClass: '', city: '', pincode: '', experience: '' };
         setFilters(empty); setApplied(empty); setPage(1);
     };
-    const activeFilterCount = [applied.subject, applied.teachingClass, applied.city, applied.experience].filter(Boolean).length;
+    const activeFilterCount = [applied.subject, applied.teachingClass, applied.city, applied.pincode, applied.experience].filter(Boolean).length;
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -137,16 +139,25 @@ const TutorListing = () => {
                             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                             <input
                                 className="w-full pl-11 pr-4 py-3 bg-white text-gray-800 outline-none border-2 border-white focus:border-amber-400 placeholder:text-gray-400"
-                                placeholder="Enter city name..."
+                                placeholder="City..."
                                 value={filters.city}
                                 onChange={e => setFilters(f => ({ ...f, city: e.target.value }))}
+                                onKeyDown={e => e.key === 'Enter' && handleApply()}
+                            />
+                        </div>
+                        <div className="relative flex-1">
+                            <input
+                                className="w-full px-4 py-3 bg-white text-gray-800 outline-none border-2 border-white focus:border-amber-400 placeholder:text-gray-400"
+                                placeholder="Pincode..."
+                                value={filters.pincode}
+                                onChange={e => setFilters(f => ({ ...f, pincode: e.target.value }))}
                                 onKeyDown={e => e.key === 'Enter' && handleApply()}
                             />
                         </div>
                         <button onClick={() => setShowFilters(!showFilters)}
                             className={`flex items-center gap-2 px-5 py-3 font-semibold text-sm transition-all border-2 ${showFilters || activeFilterCount > 0 ? 'bg-amber-500 text-white border-amber-500' : 'bg-transparent text-white border-white hover:bg-blue-800'}`}>
                             <SlidersHorizontal size={16} />
-                            Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
+                            More
                         </button>
                         <button onClick={handleApply} className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 transition-all">
                             Search
@@ -185,6 +196,11 @@ const TutorListing = () => {
                                 </div>
                             </div>
                             <div>
+                                <label className="text-sm font-bold text-blue-900 mb-2 block">Pincode</label>
+                                <input className="input-field" placeholder="Enter pincode..."
+                                    value={filters.pincode} onChange={e => setFilters(f => ({ ...f, pincode: e.target.value }))} />
+                            </div>
+                            <div>
                                 <label className="text-sm font-bold text-blue-900 mb-2 block">Experience</label>
                                 <select className="input-field" value={filters.experience}
                                     onChange={e => setFilters(f => ({ ...f, experience: e.target.value }))}>
@@ -216,6 +232,14 @@ const TutorListing = () => {
                             <span className="bg-blue-100 text-blue-900 text-xs font-bold px-3 py-1.5 flex items-center gap-1 border border-blue-200">
                                 📍 {applied.city}
                                 <button onClick={() => { setApplied(a => ({ ...a, city: '' })); setFilters(f => ({ ...f, city: '' })); }}>
+                                    <X size={12} />
+                                </button>
+                            </span>
+                        )}
+                        {applied.pincode && (
+                            <span className="bg-blue-100 text-blue-900 text-xs font-bold px-3 py-1.5 flex items-center gap-1 border border-blue-200">
+                                📮 {applied.pincode}
+                                <button onClick={() => { setApplied(a => ({ ...a, pincode: '' })); setFilters(f => ({ ...f, pincode: '' })); }}>
                                     <X size={12} />
                                 </button>
                             </span>

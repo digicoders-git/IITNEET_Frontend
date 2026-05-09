@@ -1,108 +1,80 @@
 import React from 'react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import PricingSection from '../../components/PricingSection';
+import { Zap, Target, Award, BarChart3 } from 'lucide-react';
 
 const Pricing = () => {
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-white">
             <Navbar />
-            <div className="pt-24 pb-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            {/* Header */}
+            <section className="relative pt-32 pb-20 bg-blue-900 overflow-hidden border-b-4 border-amber-500">
+                <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-amber-500 opacity-10 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-blue-400 opacity-10 rounded-full blur-3xl"></div>
+                
+                <div className="page-container relative z-10 text-center">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="inline-flex items-center gap-2 bg-blue-800/50 border border-blue-700 px-4 py-1.5 rounded-full text-amber-400 text-sm font-bold mb-6">
+                            <Zap size={16} className="fill-current" />
+                            <span>Premium Plans for Tutors & Coachings</span>
+                        </div>
+                        <h1 className="text-4xl md:text-6xl font-black text-white mb-6 uppercase tracking-tight">
+                            Pricing <span className="text-amber-500">& Plans</span>
+                        </h1>
+                        <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto font-medium">
+                            Transparent pricing designed to help you grow. No hidden charges, just results.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            {/* Pricing Section Component */}
+            <PricingSection />
+
+            {/* Why Choose Section */}
+            <section className="py-20 bg-white">
+                <div className="page-container">
                     <div className="text-center mb-16">
-                        <h1 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4">Simple, Transparent Pricing</h1>
-                        <p className="text-lg text-slate-600 max-w-2xl mx-auto">Choose the plan that's right for you and start reaching more students today.</p>
+                        <h2 className="text-3xl font-black text-blue-900 mb-4 uppercase tracking-tight">Why Premium?</h2>
+                        <div className="w-20 h-2 bg-amber-500 mx-auto rounded-full"></div>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {/* Students Plan */}
-                        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex flex-col">
-                            <div className="p-8">
-                                <h3 className="text-xl font-bold text-slate-900 mb-2">For Students</h3>
-                                <div className="flex items-baseline gap-1 mb-4">
-                                    <span className="text-4xl font-bold text-slate-900">Free</span>
-                                </div>
-                                <p className="text-slate-600 mb-6">Search and contact verified tutors and coaching institutes.</p>
-                                <ul className="space-y-3 mb-8">
-                                    <li className="flex items-center gap-2 text-slate-600">
-                                        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="5 13l4 4L19 7"></path></svg>
-                                        Search Tutors by Subject
-                                    </li>
-                                    <li className="flex items-center gap-2 text-slate-600">
-                                        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="5 13l4 4L19 7"></path></svg>
-                                        View Coaching Details
-                                    </li>
-                                    <li className="flex items-center gap-2 text-slate-600">
-                                        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="5 13l4 4L19 7"></path></svg>
-                                        Direct Contact Details
-                                    </li>
-                                </ul>
+                    <div className="grid md:grid-cols-3 gap-10">
+                        <div className="bg-white p-10 rounded-[2.5rem] border-2 border-gray-50 hover:border-blue-900/10 hover:shadow-xl transition-all group">
+                            <div className="w-16 h-16 bg-blue-50 text-blue-900 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-blue-900 group-hover:text-white transition-all transform group-hover:rotate-6">
+                                <Target size={32} />
                             </div>
-                            <div className="p-8 bg-slate-50 mt-auto border-t border-slate-100">
-                                <button className="w-full py-3 px-6 rounded-xl bg-slate-900 text-white font-semibold hover:bg-slate-800 transition-colors">Register Now</button>
-                            </div>
+                            <h3 className="text-2xl font-bold text-blue-900 mb-4">Targeted Reach</h3>
+                            <p className="text-gray-600 leading-relaxed text-lg font-medium">
+                                Connect with students specifically looking for IIT-JEE and NEET coaching. No wasted impressions.
+                            </p>
                         </div>
 
-                        {/* Tutors Plan */}
-                        <div className="bg-white rounded-2xl shadow-xl border-2 border-blue-600 overflow-hidden flex flex-col relative scale-105 z-10">
-                            <div className="absolute top-0 right-0 bg-blue-600 text-white px-4 py-1 text-xs font-bold uppercase tracking-wider rounded-bl-lg">Popular</div>
-                            <div className="p-8">
-                                <h3 className="text-xl font-bold text-slate-900 mb-2">For Tutors</h3>
-                                <div className="flex items-baseline gap-1 mb-4">
-                                    <span className="text-4xl font-bold text-slate-900">₹99</span>
-                                    <span className="text-slate-500">/month</span>
-                                </div>
-                                <p className="text-slate-600 mb-6">Create your profile and start getting leads from interested parents.</p>
-                                <ul className="space-y-3 mb-8">
-                                    <li className="flex items-center gap-2 text-slate-600">
-                                        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="5 13l4 4L19 7"></path></svg>
-                                        Public Profile Listing
-                                    </li>
-                                    <li className="flex items-center gap-2 text-slate-600">
-                                        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="5 13l4 4L19 7"></path></svg>
-                                        Verified Badge
-                                    </li>
-                                    <li className="flex items-center gap-2 text-slate-600">
-                                        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="5 13l4 4L19 7"></path></svg>
-                                        Subject Highlighting
-                                    </li>
-                                </ul>
+                        <div className="bg-white p-10 rounded-[2.5rem] border-2 border-gray-50 hover:border-blue-900/10 hover:shadow-xl transition-all group">
+                            <div className="w-16 h-16 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-amber-500 group-hover:text-white transition-all transform group-hover:-rotate-6">
+                                <Award size={32} />
                             </div>
-                            <div className="p-8 bg-blue-50 mt-auto border-t border-blue-100">
-                                <button className="w-full py-3 px-6 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">Start Trial</button>
-                            </div>
+                            <h3 className="text-2xl font-bold text-blue-900 mb-4">Verified Status</h3>
+                            <p className="text-gray-600 leading-relaxed text-lg font-medium">
+                                Build trust with a verified badge and featured listing that stands out from the competition.
+                            </p>
                         </div>
 
-                        {/* Coaching Plan */}
-                        <div className="bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden flex flex-col">
-                            <div className="p-8">
-                                <h3 className="text-xl font-bold text-slate-900 mb-2">For Coachings</h3>
-                                <div className="flex items-baseline gap-1 mb-4">
-                                    <span className="text-4xl font-bold text-slate-900">₹499</span>
-                                    <span className="text-slate-500">/month</span>
-                                </div>
-                                <p className="text-slate-600 mb-6">Boost your institute's visibility and attract more students.</p>
-                                <ul className="space-y-3 mb-8">
-                                    <li className="flex items-center gap-2 text-slate-600">
-                                        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="5 13l4 4L19 7"></path></svg>
-                                        Featured Institute Listing
-                                    </li>
-                                    <li className="flex items-center gap-2 text-slate-600">
-                                        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="5 13l4 4L19 7"></path></svg>
-                                        Banner Advertising
-                                    </li>
-                                    <li className="flex items-center gap-2 text-slate-600">
-                                        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="5 13l4 4L19 7"></path></svg>
-                                        Unlimited Student Contacts
-                                    </li>
-                                </ul>
+                        <div className="bg-white p-10 rounded-[2.5rem] border-2 border-gray-50 hover:border-blue-900/10 hover:shadow-xl transition-all group">
+                            <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-indigo-600 group-hover:text-white transition-all transform group-hover:rotate-6">
+                                <BarChart3 size={32} />
                             </div>
-                            <div className="p-8 bg-slate-50 mt-auto border-t border-slate-100">
-                                <button className="w-full py-3 px-6 rounded-xl bg-slate-900 text-white font-semibold hover:bg-slate-800 transition-colors">Contact Sales</button>
-                            </div>
+                            <h3 className="text-2xl font-bold text-blue-900 mb-4">Lead Generation</h3>
+                            <p className="text-gray-600 leading-relaxed text-lg font-medium">
+                                Receive direct inquiries and contact details of interested students and parents in real-time.
+                            </p>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
+
             <Footer />
         </div>
     );

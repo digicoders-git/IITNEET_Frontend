@@ -45,12 +45,12 @@ const Login = () => {
                 <div className="w-full max-w-md">
                     <div className="bg-white border-2 border-gray-200 p-8">
                         <div className="mb-8 text-center">
-                            <img 
-                                src="/logo.png" 
-                                alt="IIT-NEET.com Logo" 
+                            <img
+                                src="/logo.png"
+                                alt="iitneet.com Logo"
                                 className="h-12 w-auto mx-auto mb-6"
                             />
-                            <h1 className="text-3xl font-bold text-blue-900 mb-2">Login to IIT-NEET.com</h1>
+                            <h1 className="text-3xl font-bold text-blue-900 mb-2">Login to iitneet.com</h1>
                             <p className="text-gray-500">Enter your credentials to access your account</p>
                         </div>
 
@@ -80,14 +80,14 @@ const Login = () => {
                             </button>
                         </form>
 
-                        <div className="mt-6 p-4 bg-gray-50 border-2 border-gray-200">
+                        {/* <div className="mt-6 p-4 bg-gray-50 border-2 border-gray-200">
                             <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Demo Accounts</p>
-                            {/* <div className="space-y-1 text-xs text-gray-500">
+                            <div className="space-y-1 text-xs text-gray-500">
                                 <p><span className="font-bold text-blue-900">Admin:</span> admin@iitneet.com / admin123</p>
                                 <p><span className="font-bold text-blue-900">Tutor:</span> rajesh@iitneet.com / tutor123</p>
                                 <p><span className="font-bold text-blue-900">Student:</span> aryan@student.com / student123</p>
-                            </div> */}
-                        </div>
+                            </div>
+                        </div> */}
 
                         <p className="text-center text-gray-500 text-sm mt-6">
                             Don't have an account?{' '}

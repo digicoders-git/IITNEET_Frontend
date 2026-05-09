@@ -164,7 +164,7 @@ const AdvertisingPage = () => {
                     <div className="max-w-4xl mx-auto text-center">
                         <div className="inline-flex items-center gap-2 bg-blue-800/50 border border-blue-700 px-4 py-1.5 rounded-full text-amber-400 text-sm font-bold mb-6">
                             <Megaphone size={16} />
-                            <span>Grow Your Institute with IIT-NEET.com</span>
+                            <span>Grow Your Institute with iitneet.com</span>
                         </div>
                         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
                             Target the Right Students at the <span className="text-amber-500">Right Time</span>
@@ -249,10 +249,14 @@ const AdvertisingPage = () => {
                                                 )}
                                             </div>
                                             <button 
-                                                onClick={() => handleAdClick(ads[activeIndex]._id, ads[activeIndex].link)}
+                                                onClick={() => {
+                                                    if (ads[activeIndex].coachingId?._id) {
+                                                        navigate(`/coachings/${ads[activeIndex].coachingId._id}`);
+                                                    }
+                                                }}
                                                 className="ml-auto bg-blue-900 text-white px-8 py-4 rounded-[1.25rem] font-bold text-sm flex items-center gap-3 hover:bg-amber-500 hover:scale-105 transition-all shadow-xl shadow-blue-900/10 active:scale-95"
                                             >
-                                                Explore Program <ExternalLink size={18} />
+                                                View Profile <ArrowRight size={18} />
                                             </button>
                                         </div>
                                     </div>
@@ -376,7 +380,7 @@ const AdvertisingPage = () => {
                             </div>
                         </div>
                         <div className="md:w-2/3 text-center md:text-left">
-                            <h2 className="text-3xl md:text-4xl font-black text-white mb-8 leading-tight italic">"IIT-NEET.com helped us increase our student walk-ins by 40% in just two months. The quality of leads is exceptional."</h2>
+                            <h2 className="text-3xl md:text-4xl font-black text-white mb-8 leading-tight italic">"iitneet.com helped us increase our student walk-ins by 40% in just two months. The quality of leads is exceptional."</h2>
                             <div>
                                 <div className="font-black text-amber-500 text-2xl uppercase tracking-tight">Director of Zenith Coaching</div>
                                 <div className="text-blue-300 font-bold uppercase tracking-widest text-xs mt-1">Mumbai, India</div>
@@ -487,9 +491,6 @@ const AdvertisingPage = () => {
                                 <Link to="/contact" className="bg-white text-gray-900 px-10 py-5 rounded-[1.5rem] font-black text-sm uppercase tracking-widest hover:bg-amber-500 hover:text-white transition-all text-center">
                                     Send Inquiry
                                 </Link>
-                                <a href="tel:+919876543210" className="border-2 border-white/20 text-white px-10 py-5 rounded-[1.5rem] font-black text-sm uppercase tracking-widest hover:bg-white/10 transition-all text-center">
-                                    Call Us
-                                </a>
                             </div>
                         </div>
                     </div>

@@ -176,7 +176,7 @@ const StudentDashboard = () => {
                                                 <span className="flex items-center gap-1"><MapPin size={11} />{profile.location}</span>
                                             )}
                                             {profile.fees && (
-                                                <span className="flex items-center gap-0.5 font-bold text-blue-900">
+                                                <span className="flex items-center font-bold text-blue-900">
                                                     <IndianRupee size={11} />{profile.fees}
                                                 </span>
                                             )}
