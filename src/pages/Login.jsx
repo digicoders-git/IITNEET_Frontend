@@ -4,13 +4,14 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { Mail, Lock, ChevronRight } from 'lucide-react';
+import { Mail, Lock, ChevronRight, AlertCircle, X } from 'lucide-react';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showApprovalModal, setShowApprovalModal] = useState(false);
 
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -29,7 +30,11 @@ const Login = () => {
             else if (role === 'student') navigate('/student');
             else navigate('/');
         } catch (err) {
-            setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+            if (err.response?.data?.needsApproval) {
+                setShowApprovalModal(true);
+            } else {
+                setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+            }
         } finally { setLoading(false); }
     };
 
@@ -91,6 +96,51 @@ const Login = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Approval Pending Modal */}
+            {showApprovalModal && (
+                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={() => setShowApprovalModal(false)}>
+                    <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-start justify-between mb-5">
+                            <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center shrink-0">
+                                    <AlertCircle size={24} className="text-amber-600" />
+                                </div>
+                                <div>
+                                    <h3 className="font-black text-blue-900 text-lg">Account Not Verified</h3>
+                                    <p className="text-xs text-gray-400 mt-0.5">Pending Admin Approval</p>
+                                </div>
+                            </div>
+                            <button onClick={() => setShowApprovalModal(false)} className="text-gray-400 hover:text-gray-600">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5 mb-6">
+                            <p className="text-amber-900 text-sm leading-relaxed">
+                                Your account has not been verified by the admin yet. Please contact the admin for further details or wait for approval.
+                            </p>
+                        </div>
+
+                        <div className="space-y-3">
+                            <Link
+                                to="/contact"
+                                className="w-full text-center bg-blue-900 text-white py-3.5 rounded-xl font-black text-sm hover:bg-blue-800 transition-all block"
+                                onClick={() => setShowApprovalModal(false)}
+                            >
+                                Contact Admin
+                            </Link>
+                            <button
+                                onClick={() => setShowApprovalModal(false)}
+                                className="w-full text-center border-2 border-gray-200 text-gray-600 py-3.5 rounded-xl font-black text-sm hover:bg-gray-50 transition-all"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <Footer />
         </div>
     );

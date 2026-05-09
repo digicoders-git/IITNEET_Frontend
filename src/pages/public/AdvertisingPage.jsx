@@ -4,14 +4,20 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { 
     Megaphone, Target, BarChart3, Users, CheckCircle, ArrowRight, Star, Zap, Award, 
-    ExternalLink, MapPin, Building2, Instagram, Globe, Twitter, Youtube, Facebook 
+    ExternalLink, MapPin, Building2, Instagram, Globe, Twitter, Youtube, Facebook,
+    GraduationCap, BookOpen, Clock, Loader2, X
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const AdvertisingPage = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
     const [ads, setAds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeIndex, setActiveIndex] = useState(0);
+    const [purchasing, setPurchasing] = useState(null);
+    const [modal, setModal] = useState(null); // { type: 'login' | 'wrong-role', role }
 
     useEffect(() => {
         const fetchAds = async () => {
@@ -55,6 +61,32 @@ const AdvertisingPage = () => {
     const nextAd = () => setActiveIndex((prev) => (prev + 1) % ads.length);
     const prevAd = () => setActiveIndex((prev) => (prev - 1 + ads.length) % ads.length);
 
+    const handlePlanClick = async (planRole) => {
+        // Not logged in
+        if (!user) { setModal({ type: 'login', role: planRole }); return; }
+
+        // Student clicking student plan
+        if (planRole === 'student' && user.role === 'student') {
+            navigate('/student/profile');
+            return;
+        }
+
+        // Tutor clicking tutor plan
+        if (planRole === 'tutor' && user.role === 'tutor') {
+            navigate('/tutor/subscription');
+            return;
+        }
+
+        // Coaching clicking advertiser plan
+        if (planRole === 'coaching' && user.role === 'coaching') {
+            navigate('/coaching/subscription');
+            return;
+        }
+
+        // Wrong role logged in
+        setModal({ type: 'wrong-role', role: planRole });
+    };
+
     const plans = [
         {
             name: "For Students",
@@ -70,9 +102,9 @@ const AdvertisingPage = () => {
                 "Instant contact unlock"
             ],
             color: "blue",
-            icon: "🎓",
+            icon: GraduationCap,
             recommended: false,
-            cta: "/register"
+            role: "student"
         },
         {
             name: "For Tutors",
@@ -88,9 +120,9 @@ const AdvertisingPage = () => {
                 "Re-activate within 15 days of expiry"
             ],
             color: "amber",
-            icon: "📚",
+            icon: BookOpen,
             recommended: true,
-            cta: "/register?role=tutor"
+            role: "tutor"
         },
         {
             name: "For Advertisers",
@@ -106,9 +138,9 @@ const AdvertisingPage = () => {
                 "Re-activate within 15 days of expiry"
             ],
             color: "indigo",
-            icon: "🏫",
+            icon: Building2,
             recommended: false,
-            cta: "/register?role=coaching"
+            role: "coaching"
         }
     ];
 
@@ -375,15 +407,17 @@ const AdvertisingPage = () => {
                                 }`}
                             >
                                 {plan.recommended && (
-                                    <div className="bg-amber-500 text-white text-xs font-black uppercase tracking-widest text-center py-2.5 px-4">
-                                        ⭐ Most Popular
+                                    <div className="bg-amber-500 text-white text-xs font-black uppercase tracking-widest text-center py-2.5 px-4 flex items-center justify-center gap-1.5">
+                                        <Star size={12} fill="currentColor" /> Most Popular
                                     </div>
                                 )}
 
                                 <div className={`px-8 pt-10 pb-8 ${
                                     plan.recommended ? 'bg-gradient-to-br from-blue-900 to-indigo-900' : 'bg-white'
                                 }`}>
-                                    <div className="text-4xl mb-4">{plan.icon}</div>
+                                    <div className="w-12 h-12 mb-4 flex items-center justify-center rounded-2xl bg-white/10">
+                                        <plan.icon size={28} className={plan.recommended ? 'text-amber-400' : 'text-blue-900'} />
+                                    </div>
                                     <h3 className={`text-2xl font-black mb-2 ${
                                         plan.recommended ? 'text-white' : 'text-blue-900'
                                     }`}>{plan.name}</h3>
@@ -399,12 +433,12 @@ const AdvertisingPage = () => {
                                     <p className={`text-sm font-semibold ${
                                         plan.recommended ? 'text-blue-300' : 'text-gray-400'
                                     }`}>{plan.period}</p>
-                                    <div className={`inline-block mt-3 text-xs font-bold px-3 py-1 rounded-full ${
+                                    <div className={`inline-flex items-center gap-1.5 mt-3 text-xs font-bold px-3 py-1 rounded-full ${
                                         plan.recommended
                                             ? 'bg-white/20 text-white'
                                             : 'bg-blue-50 text-blue-700'
                                     }`}>
-                                        🕐 {plan.validity}
+                                        <Clock size={12} /> {plan.validity}
                                     </div>
                                 </div>
 
@@ -418,16 +452,20 @@ const AdvertisingPage = () => {
                                         ))}
                                     </ul>
 
-                                    <Link
-                                        to={plan.cta}
-                                        className={`w-full text-center py-4 rounded-2xl font-black text-sm uppercase tracking-wider transition-all hover:scale-105 ${
+                                    <button
+                                        onClick={() => handlePlanClick(plan.role)}
+                                        disabled={purchasing === plan.role}
+                                        className={`w-full text-center py-4 rounded-2xl font-black text-sm uppercase tracking-wider transition-all hover:scale-105 disabled:opacity-60 flex items-center justify-center gap-2 ${
                                             plan.recommended
                                                 ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-lg shadow-amber-200'
                                                 : 'bg-blue-900 hover:bg-blue-800 text-white'
                                         }`}
                                     >
-                                        Get Started
-                                    </Link>
+                                        {purchasing === plan.role
+                                            ? <><Loader2 size={15} className="animate-spin" /> Processing...</>
+                                            : 'Get Started'
+                                        }
+                                    </button>
                                 </div>
                             </div>
                         ))}
@@ -457,6 +495,57 @@ const AdvertisingPage = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Modal */}
+            {modal && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setModal(null)}>
+                    <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between mb-5">
+                            <h3 className="font-black text-blue-900 text-lg">
+                                {modal.type === 'login' ? 'Login Required' : 'Wrong Account Type'}
+                            </h3>
+                            <button onClick={() => setModal(null)} className="text-gray-400 hover:text-gray-600">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {modal.type === 'login' ? (
+                            <>
+                                <p className="text-gray-500 text-sm mb-6">
+                                    Please login or register to purchase the
+                                    <strong className="text-blue-900"> {modal.role === 'student' ? 'Student' : modal.role === 'tutor' ? 'Tutor' : 'Advertiser'} </strong>
+                                    plan.
+                                </p>
+                                <div className="flex gap-3">
+                                    <Link to={`/login`} className="flex-1 text-center bg-blue-900 text-white py-3 rounded-xl font-black text-sm hover:bg-blue-800 transition-all">
+                                        Login
+                                    </Link>
+                                    <Link
+                                        to={modal.role === 'student' ? '/register' : `/register?role=${modal.role}`}
+                                        className="flex-1 text-center border-2 border-blue-900 text-blue-900 py-3 rounded-xl font-black text-sm hover:bg-blue-50 transition-all"
+                                    >
+                                        Register
+                                    </Link>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <p className="text-gray-500 text-sm mb-6">
+                                    You are logged in as <strong className="text-blue-900">{user?.role}</strong>. This plan is for
+                                    <strong className="text-blue-900"> {modal.role === 'student' ? 'Students' : modal.role === 'tutor' ? 'Tutors' : 'Coaching Institutes'}</strong>.
+                                    Please login with the correct account.
+                                </p>
+                                <button
+                                    onClick={() => setModal(null)}
+                                    className="w-full bg-blue-900 text-white py-3 rounded-xl font-black text-sm hover:bg-blue-800 transition-all"
+                                >
+                                    OK, Got it
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
 
             <Footer />
         </div>

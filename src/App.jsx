@@ -52,13 +52,11 @@ const ScrollToTop = () => {
 const AppContent = () => {
     const location = useLocation();
     const { user } = useAuth();
-    const isDashboard = ['/admin', '/tutor', '/coaching'].some(p => location.pathname.startsWith(p));
-
 
     return (
         <>
             <ScrollToTop />
-            {!isDashboard && <FloatingCTA />}
+            <FloatingCTA />
             <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<Home />} />

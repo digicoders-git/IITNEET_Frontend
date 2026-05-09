@@ -43,17 +43,29 @@ const TutorPublicProfile = () => {
 
     const handleUnlock = async () => {
         if (!user) return navigate('/login');
+        if (user.role !== 'student') return navigate('/login');
         setUnlocking(true);
         try {
             const orderRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/payment/create-order`, { tutorId: userId }, { headers: { Authorization: `Bearer ${token}` } });
-            const { orderId, amount, currency, keyId, tutorName } = orderRes.data;
+            const { useWallet, orderId, amount, currency, keyId, tutorName } = orderRes.data;
+
+            if (useWallet) {
+                // Use wallet balance directly
+                const verifyRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/payment/verify-unlock`, {
+                    tutorId: userId, useWallet: true
+                }, { headers: { Authorization: `Bearer ${token}` } });
+                setData(d => ({ ...d, contactUnlocked: true, user: { ...d.user, phone: verifyRes.data.phone } }));
+                setUnlocking(false);
+                return;
+            }
+
             const options = {
                 key: keyId, amount, currency, name: 'IIT-NEET Platform', description: `Unlock contact of ${tutorName}`, order_id: orderId,
                 handler: async (response) => {
                     try {
                         const verifyRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/payment/verify-unlock`, {
                             razorpay_order_id: response.razorpay_order_id, razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_signature: response.razorpay_signature, tutorId: userId
+                            razorpay_signature: response.razorpay_signature, tutorId: userId, useWallet: false
                         }, { headers: { Authorization: `Bearer ${token}` } });
                         setData(d => ({ ...d, contactUnlocked: true, user: { ...d.user, phone: verifyRes.data.phone } }));
                     } catch (err) { alert('Payment verification failed'); } finally { setUnlocking(false); }

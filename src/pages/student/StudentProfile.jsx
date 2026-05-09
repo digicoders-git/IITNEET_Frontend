@@ -8,7 +8,7 @@ import {
     User, Mail, Phone, Lock, Save, CheckCircle,
     GraduationCap, ArrowRight, LogOut, Settings, KeyRound,
     BookOpen, ChevronRight, Search, Star, MapPin,
-    IndianRupee, Building2, LayoutDashboard, Eye, EyeOff
+    IndianRupee, Building2, LayoutDashboard, Eye, EyeOff, Clock
 } from 'lucide-react';
 
 const Label = ({ children }) => (
@@ -24,10 +24,12 @@ const StudentProfile = () => {
     const [showPass, setShowPass] = useState({ current: false, new: false, confirm: false });
     const [unlocked, setUnlocked] = useState([]);
     const [featured, setFeatured] = useState([]);
+    const [wallet, setWallet] = useState({ contactsRemaining: 0, totalPurchased: 0, totalUsed: 0 });
     const [profileMsg, setProfileMsg] = useState('');
     const [passMsg, setPassMsg] = useState('');
     const [savingProfile, setSavingProfile] = useState(false);
     const [savingPass, setSavingPass] = useState(false);
+    const [buyingPlan, setBuyingPlan] = useState(false);
     const [search, setSearch] = useState('');
 
     useEffect(() => {
@@ -35,6 +37,9 @@ const StudentProfile = () => {
         axios.get(`${import.meta.env.VITE_API_URL}/api/payment/unlocked`, {
             headers: { Authorization: `Bearer ${user?.token}` }
         }).then(res => setUnlocked(res.data)).catch(() => {});
+        axios.get(`${import.meta.env.VITE_API_URL}/api/payment/student/wallet`, {
+            headers: { Authorization: `Bearer ${user?.token}` }
+        }).then(res => setWallet(res.data)).catch(() => {});
         axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/featured`)
             .then(res => setFeatured(res.data)).catch(() => {});
     }, [user]);
@@ -69,8 +74,40 @@ const StudentProfile = () => {
         } finally { setSavingPass(false); }
     };
 
+    const handleBuyPlan = async () => {
+        setBuyingPlan(true);
+        try {
+            const orderRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/payment/student/create-order`, {}, {
+                headers: { Authorization: `Bearer ${user?.token}` }
+            });
+            const { orderId, amount, currency, keyId } = orderRes.data;
+            const options = {
+                key: keyId, amount, currency,
+                name: 'IIT-NEET Platform',
+                description: '2 Tutor Contacts — Unlimited Validity',
+                order_id: orderId,
+                handler: async (response) => {
+                    try {
+                        const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/payment/student/verify`, {
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                        }, { headers: { Authorization: `Bearer ${user?.token}` } });
+                        setWallet(w => ({ ...w, contactsRemaining: res.data.contactsRemaining }));
+                    } catch { alert('Payment verification failed'); }
+                    finally { setBuyingPlan(false); }
+                },
+                prefill: { name: user.name, email: user.email },
+                theme: { color: '#1e3a8a' },
+                modal: { ondismiss: () => setBuyingPlan(false) }
+            };
+            new window.Razorpay(options).open();
+        } catch { alert('Failed to initiate payment'); setBuyingPlan(false); }
+    };
+
     const menu = [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+        { id: 'recharge', label: 'Buy Contacts', icon: IndianRupee, badge: wallet.contactsRemaining || null },
         { id: 'tutors', label: 'My Tutors', icon: BookOpen, badge: unlocked.length },
         { id: 'edit', label: 'Edit Profile', icon: Settings },
         { id: 'password', label: 'Change Password', icon: KeyRound },
@@ -166,6 +203,30 @@ const StudentProfile = () => {
                                     ))}
                                 </div>
 
+                                {/* Wallet Banner */}
+                                <div
+                                    onClick={() => setActiveSection('recharge')}
+                                    className={`cursor-pointer flex items-center justify-between px-5 py-4 border-2 transition-all ${
+                                        wallet.contactsRemaining > 0
+                                            ? 'bg-green-50 border-green-200 hover:border-green-400'
+                                            : 'bg-amber-50 border-amber-200 hover:border-amber-400'
+                                    }`}>
+                                    <div className="flex items-center gap-3">
+                                        <IndianRupee size={20} className={wallet.contactsRemaining > 0 ? 'text-green-600' : 'text-amber-600'} />
+                                        <div>
+                                            <p className={`font-black text-sm ${
+                                                wallet.contactsRemaining > 0 ? 'text-green-900' : 'text-amber-900'
+                                            }`}>
+                                                {wallet.contactsRemaining > 0
+                                                    ? `${wallet.contactsRemaining} contact${wallet.contactsRemaining > 1 ? 's' : ''} available in wallet`
+                                                    : 'No contacts in wallet — Buy now'}
+                                            </p>
+                                            <p className="text-xs text-gray-400">₹200 for 2 contacts · Unlimited validity</p>
+                                        </div>
+                                    </div>
+                                    <ArrowRight size={16} className="text-gray-400 shrink-0" />
+                                </div>
+
                                 {/* Featured Tutors */}
                                 <div>
                                     <div className="flex justify-between items-center mb-3">
@@ -208,6 +269,80 @@ const StudentProfile = () => {
                                     </div>
                                 </div>
                             </>
+                        )}
+
+                        {/* ── BUY CONTACTS ── */}
+                        {activeSection === 'recharge' && (
+                            <div className="space-y-5">
+                                {/* Wallet Status */}
+                                <div className={`p-6 border-2 flex items-center gap-5 ${
+                                    wallet.contactsRemaining > 0
+                                        ? 'bg-green-50 border-green-200'
+                                        : 'bg-amber-50 border-amber-200'
+                                }`}>
+                                    <div className={`w-14 h-14 flex items-center justify-center text-2xl font-black shrink-0 ${
+                                        wallet.contactsRemaining > 0 ? 'bg-green-600 text-white' : 'bg-amber-500 text-white'
+                                    }`}>
+                                        {wallet.contactsRemaining}
+                                    </div>
+                                    <div>
+                                        <p className={`font-black text-lg ${
+                                            wallet.contactsRemaining > 0 ? 'text-green-900' : 'text-amber-900'
+                                        }`}>
+                                            {wallet.contactsRemaining > 0
+                                                ? `${wallet.contactsRemaining} Contact${wallet.contactsRemaining > 1 ? 's' : ''} Available`
+                                                : 'No Contacts Remaining'}
+                                        </p>
+                                        <p className="text-sm text-gray-500 mt-0.5">
+                                            Total Purchased: {wallet.totalPurchased} &nbsp;|&nbsp; Used: {wallet.totalUsed}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Plan Card */}
+                                <div className="bg-white border-2 border-gray-200 overflow-hidden">
+                                    <div className="bg-blue-900 px-6 py-8 text-center">
+                                        <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                            <GraduationCap size={32} className="text-amber-400" />
+                                        </div>
+                                        <h3 className="text-2xl font-black text-white">Student Contact Plan</h3>
+                                        <p className="text-blue-200 text-sm mt-2">Access hidden tutor contact numbers</p>
+                                        <div className="mt-5">
+                                            <span className="text-5xl font-black text-amber-400">₹200</span>
+                                            <p className="text-blue-300 text-sm mt-1">per 2 contacts</p>
+                                        </div>
+                                        <div className="inline-flex items-center gap-1.5 mt-3 bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                            <Clock size={12} /> Unlimited Validity
+                                        </div>
+                                    </div>
+                                    <div className="p-6">
+                                        <ul className="space-y-3 mb-6">
+                                            {[
+                                                'Unlock 2 hidden tutor contacts',
+                                                'Contacts never expire',
+                                                'Use anytime — no time limit',
+                                                'Search & filter verified tutors',
+                                                'Instant contact reveal',
+                                            ].map((f, i) => (
+                                                <li key={i} className="flex items-center gap-3 text-sm text-gray-600">
+                                                    <CheckCircle size={16} className="text-green-500 shrink-0" />{f}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                        <button
+                                            onClick={handleBuyPlan}
+                                            disabled={buyingPlan}
+                                            className="w-full bg-blue-900 hover:bg-blue-800 text-white font-black py-4 text-sm uppercase tracking-wider transition-all disabled:opacity-60 flex items-center justify-center gap-2"
+                                        >
+                                            <IndianRupee size={16} />
+                                            {buyingPlan ? 'Processing...' : 'Buy Now — ₹200 for 2 Contacts'}
+                                        </button>
+                                        <p className="text-xs text-gray-400 text-center mt-3">
+                                            Secure payment via Razorpay · No expiry · Buy multiple times
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         )}
 
                         {/* ── MY TUTORS ── */}
