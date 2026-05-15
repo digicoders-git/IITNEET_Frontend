@@ -55,9 +55,9 @@ const CoachingListing = () => {
             const params = { page: p, limit: 12, ...f };
             Object.keys(params).forEach(k => !params[k] && delete params[k]);
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/coachings`, { params });
-            setCoachings(res.data.coachings);
-            setTotal(res.data.total);
-            setPages(res.data.pages);
+            setCoachings(Array.isArray(res.data.coachings) ? res.data.coachings : []);
+            setTotal(res.data.total || 0);
+            setPages(res.data.pages || 1);
         } catch { setCoachings([]); }
         finally { setLoading(false); }
     }, []);

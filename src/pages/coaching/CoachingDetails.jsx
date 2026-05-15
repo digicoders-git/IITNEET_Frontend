@@ -8,7 +8,7 @@ const CoachingDetails = () => {
     const fileRef = useRef();
     const [form, setForm] = useState({
         bio: '', location: '', courses: [], facultyDetails: '', phone: '',
-        mobileVisibility: 'paid'
+        mobileVisibility: 'paid', profileVisibility: 'all'
     });
     const [courseInput, setCourseInput] = useState('');
     const [loading, setLoading] = useState(true);
@@ -29,6 +29,7 @@ const CoachingDetails = () => {
                 facultyDetails: profile?.facultyDetails || '',
                 phone: u?.phone || '',
                 mobileVisibility: profile?.mobileVisibility || 'paid',
+                profileVisibility: profile?.profileVisibility || 'all',
             });
             if (profile?.instituteImage) {
                 setInstituteImage(`${import.meta.env.VITE_API_URL}${profile.instituteImage}`);
@@ -207,33 +208,60 @@ const CoachingDetails = () => {
                             <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Verified by OTP</p>
                         </div>
                     </div>
-                    <div className="pt-4 border-t border-slate-50">
-                        <label className="text-sm font-bold text-slate-700 mb-3 block">Visibility of Mobile Number</label>
-                        <div className="flex gap-8">
-                            <label className="flex items-center gap-2.5 cursor-pointer group">
-                                <input 
-                                    type="radio" 
-                                    name="mobileVis" 
-                                    checked={form.mobileVisibility === 'paid'}
-                                    onChange={() => setForm(f => ({ ...f, mobileVisibility: 'paid' }))}
-                                    className="w-4 h-4 accent-violet-600"
-                                />
-                                <span className="text-sm font-bold text-slate-600 group-hover:text-slate-900 transition-colors">1) Only to paid users</span>
-                            </label>
-                            <label className="flex items-center gap-2.5 cursor-pointer group">
-                                <input 
-                                    type="radio" 
-                                    name="mobileVis" 
-                                    checked={form.mobileVisibility === 'all'}
-                                    onChange={() => {
-                                        if (window.confirm("Warning: Your mobile number will be visible to all users. Are you sure?")) {
-                                            setForm(f => ({ ...f, mobileVisibility: 'all' }));
-                                        }
-                                    }}
-                                    className="w-4 h-4 accent-violet-600"
-                                />
-                                <span className="text-sm font-bold text-slate-600 group-hover:text-slate-900 transition-colors">2) For all users</span>
-                            </label>
+                    <div className="pt-4 border-t border-slate-50 grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label className="text-sm font-bold text-slate-700 mb-3 block">Visibility of Mobile Number</label>
+                            <div className="flex gap-8">
+                                <label className="flex items-center gap-2.5 cursor-pointer group">
+                                    <input 
+                                        type="radio" 
+                                        name="mobileVis" 
+                                        checked={form.mobileVisibility === 'paid'}
+                                        onChange={() => setForm(f => ({ ...f, mobileVisibility: 'paid' }))}
+                                        className="w-4 h-4 accent-violet-600"
+                                    />
+                                    <span className="text-sm font-bold text-slate-600 group-hover:text-slate-900 transition-colors">1) Only to paid users</span>
+                                </label>
+                                <label className="flex items-center gap-2.5 cursor-pointer group">
+                                    <input 
+                                        type="radio" 
+                                        name="mobileVis" 
+                                        checked={form.mobileVisibility === 'all'}
+                                        onChange={() => {
+                                            if (window.confirm("Warning: Your mobile number will be visible to all users. Are you sure?")) {
+                                                setForm(f => ({ ...f, mobileVisibility: 'all' }));
+                                            }
+                                        }}
+                                        className="w-4 h-4 accent-violet-600"
+                                    />
+                                    <span className="text-sm font-bold text-slate-600 group-hover:text-slate-900 transition-colors">2) For all users</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label className="text-sm font-bold text-slate-700 mb-3 block">Profile Visibility (Search Results)</label>
+                            <div className="flex gap-8">
+                                <label className="flex items-center gap-2.5 cursor-pointer group">
+                                    <input 
+                                        type="radio" 
+                                        name="profileVis" 
+                                        checked={form.profileVisibility === 'all'}
+                                        onChange={() => setForm(f => ({ ...f, profileVisibility: 'all' }))}
+                                        className="w-4 h-4 accent-violet-600"
+                                    />
+                                    <span className="text-sm font-bold text-slate-600 group-hover:text-slate-900 transition-colors">1) Visible to all</span>
+                                </label>
+                                <label className="flex items-center gap-2.5 cursor-pointer group">
+                                    <input 
+                                        type="radio" 
+                                        name="profileVis" 
+                                        checked={form.profileVisibility === 'paid'}
+                                        onChange={() => setForm(f => ({ ...f, profileVisibility: 'paid' }))}
+                                        className="w-4 h-4 accent-violet-600"
+                                    />
+                                    <span className="text-sm font-bold text-slate-600 group-hover:text-slate-900 transition-colors">2) Only to paid users</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>

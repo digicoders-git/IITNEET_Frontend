@@ -29,9 +29,10 @@ const CoachingAds = () => {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/ads/me`, {
                 headers: { Authorization: `Bearer ${user?.token}` }
             });
-            setAds(res.data);
+            setAds(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             console.error(err);
+            setAds([]);
         } finally {
             setLoading(false);
         }

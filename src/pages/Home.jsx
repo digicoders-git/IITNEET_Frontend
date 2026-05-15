@@ -24,8 +24,8 @@ const Home = () => {
             .catch(() => { });
 
         axios.get(`${import.meta.env.VITE_API_URL}/api/ads/active`)
-            .then(res => setAds(res.data))
-            .catch(() => { });
+            .then(res => setAds(Array.isArray(res.data) ? res.data : []))
+            .catch(() => { setAds([]); });
 
         setLoadingFeatured(false);
     }, []);

@@ -32,7 +32,6 @@ import RefundPolicy from './pages/public/RefundPolicy';
 import TermsAndConditions from './pages/public/TermsAndConditions';
 import PrivacyPolicy from './pages/public/PrivacyPolicy';
 import FAQ from './pages/public/FAQ';
-import FloatingCTA from './components/FloatingCTA';
 
 
 
@@ -61,7 +60,6 @@ const AppContent = () => {
     return (
         <>
             <ScrollToTop />
-            {!isPanel && <FloatingCTA />}
             <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<Home />} />

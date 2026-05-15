@@ -23,9 +23,10 @@ const AdvertisingPage = () => {
         const fetchAds = async () => {
             try {
                 const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/ads/active`);
-                setAds(res.data);
+                setAds(Array.isArray(res.data) ? res.data : []);
             } catch (err) {
                 console.error('Failed to fetch ads', err);
+                setAds([]);
             } finally {
                 setLoading(false);
             }

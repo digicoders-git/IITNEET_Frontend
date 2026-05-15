@@ -97,9 +97,9 @@ const TutorListing = () => {
             if (f.city) params.search = f.city;
             if (f.pincode) params.pincode = f.pincode;
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/tutors`, { params });
-            setTutors(res.data.tutors);
-            setTotal(res.data.total);
-            setPages(res.data.pages);
+            setTutors(Array.isArray(res.data.tutors) ? res.data.tutors : []);
+            setTotal(res.data.total || 0);
+            setPages(res.data.pages || 1);
         } catch { setTutors([]); }
         finally { setLoading(false); }
     }, []);
