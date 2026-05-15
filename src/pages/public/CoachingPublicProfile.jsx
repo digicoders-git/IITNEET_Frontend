@@ -61,7 +61,7 @@ const CoachingPublicProfile = () => {
                             </div>
                             {profile?.location && (
                                 <div className="flex items-center gap-2 text-blue-300 text-sm">
-                                    <MapPin size={14} />{profile.location}
+                                    <MapPin size={14} />{profile.location}, {profile.locality} {profile.pincode}
                                 </div>
                             )}
                             {profile?.courses?.length > 0 && (
@@ -163,6 +163,7 @@ const CoachingPublicProfile = () => {
                                         <div>
                                             <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Location</p>
                                             <p className="font-bold text-slate-800 text-sm">{profile.location}</p>
+                                            <p className="text-[10px] text-slate-400 font-medium">{profile.locality}, {profile.pincode}</p>
                                         </div>
                                     </div>
                                 )}

@@ -98,9 +98,12 @@ const PricingSection = () => {
                                         <p className="text-white/70 text-[10px] font-bold uppercase tracking-widest">{plan.validity}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-4xl font-black text-white">{plan.price}</span>
-                                    <span className="text-white/60 text-xs font-bold">{plan.period}</span>
+                                <div className="flex flex-col">
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-4xl font-black text-white">{plan.price}</span>
+                                        <span className="text-white/60 text-xs font-bold">{plan.period}</span>
+                                    </div>
+                                    <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest mt-1">Inclusive GST</span>
                                 </div>
                             </div>
 

@@ -16,12 +16,11 @@ const Navbar = () => {
         { to: '/tutors', label: 'Tutors' },
         { to: '/coachings', label: 'Coaching Institute' },
         { to: '/advertising', label: 'Advertising' },
-        { to: '/pricing', label: 'Pricing' },
     ];
 
     const helpLinks = [
+        { to: '/help', label: 'Help Center' },
         { to: '/contact', label: 'Contact Us' },
-        { to: '/faq', label: 'FAQ' },
     ];
 
     const isActive = (path) => location.pathname === path || (path !== '/' && location.pathname.startsWith(path.split('?')[0]));

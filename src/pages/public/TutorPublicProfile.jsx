@@ -6,7 +6,7 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { 
     MapPin, Clock, Star, IndianRupee, GraduationCap, Phone, Lock, 
-    ArrowLeft, Send, CheckCircle2, MessageSquare, Shield, Zap, Youtube, ExternalLink, Loader2 
+    ArrowLeft, Send, CheckCircle2, MessageSquare, Shield, Zap, Youtube, ExternalLink, Loader2, BookOpen 
 } from 'lucide-react';
 
 const StarRating = ({ value, onChange }) => (
@@ -132,11 +132,19 @@ const TutorPublicProfile = () => {
                             </div>
 
                             <div className="flex flex-wrap justify-center md:justify-start gap-2">
-                                {(profile?.subjects || []).map(s => (
-                                    <span key={s} className="bg-slate-100 text-slate-600 text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-xl">
-                                        {s}
+                                {profile?.subjectType === 'all' ? (
+                                    <span className="bg-blue-50 text-blue-700 text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-xl border border-blue-100">
+                                        All Subjects
                                     </span>
-                                ))}
+                                ) : (
+                                    <>
+                                        {(profile?.subjects || []).map(s => (
+                                            <span key={s} className="bg-slate-100 text-slate-600 text-[11px] font-black uppercase tracking-widest px-4 py-2 rounded-xl">
+                                                {s === 'Other' ? profile.otherSubject : s}
+                                            </span>
+                                        ))}
+                                    </>
+                                )}
                             </div>
 
                             {profile?.competitiveExpert && profile?.expertSubject && (
@@ -144,7 +152,9 @@ const TutorPublicProfile = () => {
                                     <Zap size={18} fill="currentColor" className="text-amber-400" />
                                     <div className="text-left">
                                         <p className="text-[9px] font-black uppercase tracking-widest opacity-70 mb-0.5">Competitive Expert</p>
-                                        <p className="text-sm font-black">{profile.expertSubject}</p>
+                                        <p className="text-sm font-black">
+                                            {profile.expertSubject === 'Other' ? profile.otherExpertSubject : profile.expertSubject}
+                                        </p>
                                     </div>
                                 </div>
                             )}
@@ -191,49 +201,157 @@ const TutorPublicProfile = () => {
                                 </button>
                             </div>
 
-                            <div className="p-8 md:p-12">
-                                {activeTab === 'about' ? (
-                                    <div className="space-y-12">
-                                        {profile?.bio && (
+                                <div className="p-8 md:p-12">
+                                    {activeTab === 'about' ? (
+                                        <div className="space-y-12">
+                                            {/* About & Experience */}
                                             <div>
-                                                <h3 className="text-xl font-black text-slate-900 mb-4">Professional Biography</h3>
-                                                <p className="text-slate-600 text-lg leading-relaxed whitespace-pre-line">{profile.bio}</p>
-                                            </div>
-                                        )}
-
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                                            <div className="space-y-1">
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Qualification</p>
-                                                <p className="font-bold text-slate-900">{profile.qualification || 'N/A'}</p>
-                                            </div>
-                                            <div className="space-y-1">
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Level</p>
-                                                <p className="font-bold text-slate-900">{profile.teachingClass || 'Any'}</p>
-                                            </div>
-                                            <div className="space-y-1">
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Teaching Mode</p>
-                                                <p className="font-bold text-slate-900 capitalize">{profile.availability || 'Online/Offline'}</p>
-                                            </div>
-                                            <div className="space-y-1">
-                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Weekly Frequency</p>
-                                                <p className="font-bold text-slate-900">{profile.feesType || 'Discuss'}</p>
-                                            </div>
-                                        </div>
-
-                                        {profile?.youtubeChannel && (
-                                            <div className="bg-red-50 border border-red-100 p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6">
-                                                <div className="w-16 h-16 bg-red-600 text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-red-600/20"><Youtube size={32} /></div>
-                                                <div className="flex-1 text-center md:text-left">
-                                                    <h4 className="font-black text-red-900">Demo Lectures</h4>
-                                                    <p className="text-red-700/60 text-sm mb-4">Experience my teaching style on YouTube</p>
-                                                    <a href={profile.youtubeChannel} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-all">
-                                                        Visit Channel <ExternalLink size={14} />
-                                                    </a>
+                                                <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-2">
+                                                    <MessageSquare className="text-blue-900" size={20} /> About & Teaching Experience
+                                                </h3>
+                                                <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                                                    <p className="text-slate-600 text-lg leading-relaxed whitespace-pre-line">
+                                                        {profile.bio || "No biography provided."}
+                                                    </p>
+                                                    {profile.experience && (
+                                                        <div className="mt-4 pt-4 border-t border-slate-200 flex items-center gap-2 text-blue-900 font-black uppercase text-xs tracking-widest">
+                                                            <Clock size={16} /> {profile.experience} Years of Total Teaching Experience
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
-                                        )}
-                                    </div>
-                                ) : (
+
+                                            {/* Teaching Details */}
+                                            <div className="grid md:grid-cols-2 gap-8">
+                                                <div className="space-y-6">
+                                                    <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
+                                                        <GraduationCap className="text-blue-900" size={20} /> Academic Details
+                                                    </h3>
+                                                    <div className="space-y-4">
+                                                        <div className="flex justify-between items-center p-4 bg-white border border-slate-100 rounded-2xl shadow-sm">
+                                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Class / Level</span>
+                                                            <span className="font-bold text-slate-900">{profile.teachingClass === 'Other' ? profile.otherClass : (profile.teachingClass || 'Any')}</span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center p-4 bg-white border border-slate-100 rounded-2xl shadow-sm">
+                                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Qualification</span>
+                                                            <span className="font-bold text-slate-900">{profile.qualification === 'Other' ? profile.otherQualification : (profile.qualification || 'N/A')}</span>
+                                                        </div>
+                                                        <div className="flex justify-between items-center p-4 bg-white border border-slate-100 rounded-2xl shadow-sm">
+                                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Monthly Fees</span>
+                                                            <span className="font-bold text-blue-900 text-lg">₹{profile.fees || 'TBD'}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-6">
+                                                    <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
+                                                        <BookOpen className="text-blue-900" size={20} /> Expertise
+                                                    </h3>
+                                                    <div className="space-y-4">
+                                                        <div className="p-4 bg-white border border-slate-100 rounded-2xl shadow-sm">
+                                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Teaching Subjects</p>
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {profile.subjectType === 'all' ? (
+                                                                    <span className="text-sm font-bold text-slate-900">All Subjects</span>
+                                                                ) : (
+                                                                    (profile.subjects || []).map(s => (
+                                                                        <span key={s} className="bg-blue-50 text-blue-700 text-[10px] font-bold px-3 py-1 rounded-lg">
+                                                                            {s === 'Other' ? profile.otherSubject : s}
+                                                                        </span>
+                                                                    ))
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        {profile.competitiveExpert && (
+                                                            <div className="p-4 bg-amber-50 border border-amber-100 rounded-2xl shadow-sm">
+                                                                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Competitive Exam Expert</p>
+                                                                <p className="font-bold text-amber-900">{profile.expertSubject === 'Other' ? profile.otherExpertSubject : profile.expertSubject}</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Location & Contact Details Preview */}
+                                            <div className="grid md:grid-cols-2 gap-8">
+                                                <div className="space-y-6">
+                                                    <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
+                                                        <MapPin className="text-blue-900" size={20} /> Location Details
+                                                    </h3>
+                                                    <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-3">
+                                                        <div className="flex justify-between">
+                                                            <span className="text-xs font-bold text-slate-400">Locality</span>
+                                                            <span className="text-xs font-black text-slate-900">{profile.locality || 'N/A'}</span>
+                                                        </div>
+                                                        <div className="flex justify-between">
+                                                            <span className="text-xs font-bold text-slate-400">City / District</span>
+                                                            <span className="text-xs font-black text-slate-900">{profile.location || 'N/A'}</span>
+                                                        </div>
+                                                        <div className="flex justify-between">
+                                                            <span className="text-xs font-bold text-slate-400">Pincode</span>
+                                                            <span className="text-xs font-black text-slate-900">{profile.pincode || 'N/A'}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-6">
+                                                    <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
+                                                        <Shield className="text-blue-900" size={20} /> Teaching Mode
+                                                    </h3>
+                                                    <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-3">
+                                                        <div className="flex justify-between">
+                                                            <span className="text-xs font-bold text-slate-400">Mode</span>
+                                                            <span className="text-xs font-black text-slate-900 capitalize">{profile.availability || 'Online/Offline'}</span>
+                                                        </div>
+                                                        <div className="flex justify-between">
+                                                            <span className="text-xs font-bold text-slate-400">Weekly Frequency</span>
+                                                            <span className="text-xs font-black text-slate-900">
+                                                                {profile.feesType === '3days' ? '3 Days/Week' : profile.feesType === '6days' ? '6 Days/Week' : 'Negotiable'}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Weekly Schedule */}
+                                            {profile?.schedule && (
+                                                <div className="space-y-6">
+                                                    <h3 className="text-xl font-black text-slate-900 flex items-center gap-2">
+                                                        <Clock className="text-blue-900" size={20} /> Weekly Availability Schedule
+                                                    </h3>
+                                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                                                        {Object.entries(profile.schedule).map(([day, s]) => (
+                                                            <div key={day} className={`p-4 rounded-2xl border-2 transition-all ${s.available ? 'bg-blue-50 border-blue-100' : 'bg-slate-50 border-slate-100 opacity-40'}`}>
+                                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">{day}</p>
+                                                                {s.available ? (
+                                                                    <div className="space-y-1">
+                                                                        <p className="text-xs font-black text-blue-900 uppercase">{s.timing}</p>
+                                                                        <p className="text-[10px] font-bold text-blue-700/60">{s.from} - {s.to}</p>
+                                                                    </div>
+                                                                ) : (
+                                                                    <p className="text-xs font-bold text-slate-400">Off Day</p>
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* YouTube Channel */}
+                                            {profile?.youtubeChannel && (
+                                                <div className="bg-red-50 border border-red-100 p-8 rounded-[2rem] flex flex-col md:flex-row items-center gap-8">
+                                                    <div className="w-20 h-20 bg-red-600 text-white rounded-3xl flex items-center justify-center shrink-0 shadow-xl shadow-red-600/20"><Youtube size={40} /></div>
+                                                    <div className="flex-1 text-center md:text-left">
+                                                        <h4 className="text-lg font-black text-red-900">Educational YouTube Channel</h4>
+                                                        <p className="text-red-700/60 text-sm mb-4">Watch demo lectures and educational content by {tutor.name}</p>
+                                                        <a href={profile.youtubeChannel} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-red-600 text-white px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-red-700 transition-all shadow-lg shadow-red-600/20">
+                                                            Open YouTube Channel <ExternalLink size={16} />
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
                                     <div className="space-y-8">
                                         {user?.role === 'student' && (
                                             <div className="bg-slate-50 p-8 rounded-3xl mb-8">
@@ -276,16 +394,18 @@ const TutorPublicProfile = () => {
                         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl space-y-6 sticky top-24">
                             <h3 className="text-xl font-black text-blue-900">Direct Contact</h3>
                             
-                            {tutor.showPhone && tutor.phone ? (
+                            {tutor.phone ? (
                                 <a href={`tel:${tutor.phone}`} className="flex items-center gap-4 bg-emerald-50 border-2 border-emerald-100 p-6 rounded-2xl hover:bg-emerald-100 transition-all group">
-                                    <div className="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><Phone size={20} /></div>
-                                    <div className="flex-1"><p className="text-[10px] font-black text-emerald-600 uppercase mb-0.5 tracking-widest">Call Now</p><p className="text-lg font-black text-emerald-950">{tutor.phone}</p></div>
+                                    <div className="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                        {contactUnlocked ? <CheckCircle2 size={20} /> : <Phone size={20} />}
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-[10px] font-black text-emerald-600 uppercase mb-0.5 tracking-widest">
+                                            {contactUnlocked ? 'Contact Unlocked' : 'Call Now'}
+                                        </p>
+                                        <p className="text-lg font-black text-emerald-950">{tutor.phone}</p>
+                                    </div>
                                 </a>
-                            ) : contactUnlocked && tutor.phone ? (
-                                <div className="flex items-center gap-4 bg-blue-50 border-2 border-blue-100 p-6 rounded-2xl">
-                                    <div className="w-12 h-12 bg-blue-900 text-white rounded-xl flex items-center justify-center"><CheckCircle2 size={20} /></div>
-                                    <div><p className="text-[10px] font-black text-blue-900 uppercase mb-0.5 tracking-widest">Unlocked</p><p className="text-lg font-black text-blue-950">{tutor.phone}</p></div>
-                                </div>
                             ) : (
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-4 bg-slate-50 border border-slate-100 p-5 rounded-2xl opacity-60">

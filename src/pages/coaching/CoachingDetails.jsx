@@ -16,6 +16,7 @@ const CoachingDetails = () => {
     const [uploading, setUploading] = useState(false);
     const [msg, setMsg] = useState('');
     const [instituteImage, setInstituteImage] = useState('');
+    const [pendingInstituteImage, setPendingInstituteImage] = useState('');
 
     useEffect(() => {
         axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/me`, {
@@ -33,6 +34,9 @@ const CoachingDetails = () => {
             });
             if (profile?.instituteImage) {
                 setInstituteImage(`${import.meta.env.VITE_API_URL}${profile.instituteImage}`);
+            }
+            if (profile?.pendingInstituteImage) {
+                setPendingInstituteImage(`${import.meta.env.VITE_API_URL}${profile.pendingInstituteImage}`);
             }
         }).catch(() => {}).finally(() => setLoading(false));
     }, [user]);
@@ -63,8 +67,8 @@ const CoachingDetails = () => {
                 data,
                 { headers: { Authorization: `Bearer ${user?.token}` } }
             );
-            setInstituteImage(`${import.meta.env.VITE_API_URL}${res.data.imageUrl}`);
-            setMsg('Institute image uploaded successfully!');
+            setPendingInstituteImage(`${import.meta.env.VITE_API_URL}${res.data.imageUrl}`);
+            setMsg('Institute image uploaded successfully and is waiting for admin approval!');
         } catch (err) {
             setMsg(err.response?.data?.message || 'Image upload failed');
         } finally {
@@ -130,7 +134,14 @@ const CoachingDetails = () => {
                     <div className="flex flex-col md:flex-row gap-6 items-start">
                         <div className="relative">
                             <div className="w-48 h-48 border-2 border-slate-200 rounded-2xl bg-slate-50 overflow-hidden">
-                                {instituteImage ? (
+                                {pendingInstituteImage ? (
+                                    <div className="relative w-full h-full">
+                                        <img src={pendingInstituteImage} alt="Pending" className="w-full h-full object-cover opacity-60" />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <span className="bg-amber-500 text-[10px] font-black text-white px-2 py-1 uppercase tracking-widest shadow-lg">Pending Approval</span>
+                                        </div>
+                                    </div>
+                                ) : instituteImage ? (
                                     <img src={instituteImage} alt="Institute" className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-slate-300">

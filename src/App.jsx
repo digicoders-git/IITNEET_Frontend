@@ -10,6 +10,7 @@ import AdminCoachings from './pages/admin/AdminCoachings';
 import AdminPayments from './pages/admin/AdminPayments';
 import AdminSubscriptions from './pages/admin/AdminSubscriptions';
 import AdminAds from './pages/admin/AdminAds';
+import AdminPhotoApprovals from './pages/admin/AdminPhotoApprovals';
 import TutorDashboard from './pages/tutor/TutorDashboard';
 import TutorProfile from './pages/tutor/TutorProfile';
 import TutorSubscription from './pages/tutor/TutorSubscription';
@@ -31,7 +32,7 @@ import Pricing from './pages/public/Pricing';
 import RefundPolicy from './pages/public/RefundPolicy';
 import TermsAndConditions from './pages/public/TermsAndConditions';
 import PrivacyPolicy from './pages/public/PrivacyPolicy';
-import FAQ from './pages/public/FAQ';
+import Help from './pages/public/Help';
 
 
 
@@ -72,11 +73,12 @@ const AppContent = () => {
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/advertising" element={<AdvertisingPage />} />
                 <Route path="/about" element={<AboutUs />} />
-                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/pricing" element={<Navigate to="/help" replace />} />
+                <Route path="/faq" element={<Navigate to="/help" replace />} />
+                <Route path="/help" element={<Help />} />
                 <Route path="/refund-policy" element={<RefundPolicy />} />
                 <Route path="/terms" element={<TermsAndConditions />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/faq" element={<FAQ />} />
 
                 {/* Admin Routes */}
                 <Route path="/admin/*" element={
@@ -89,6 +91,7 @@ const AppContent = () => {
                                 <Route path="/payments" element={<AdminPayments />} />
                                 <Route path="/subscriptions" element={<AdminSubscriptions />} />
                                 <Route path="/ads" element={<AdminAds />} />
+                                <Route path="/photo-approvals" element={<AdminPhotoApprovals />} />
                             </Routes>
                         </DashboardLayout>
                     </ProtectedRoute>

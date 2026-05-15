@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
-import { Plus, Trash2, Clock, CheckCircle, Image as ImageIcon, Megaphone, Loader2, CreditCard, Video, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Trash2, Clock, CheckCircle, Image as ImageIcon, Megaphone, Loader2, CreditCard, Video, ChevronDown, ChevronUp, Pencil } from 'lucide-react';
 
 const CoachingAds = () => {
     const { user } = useAuth();
@@ -22,6 +22,7 @@ const CoachingAds = () => {
     const [error, setError] = useState('');
     const [uploadingVideo, setUploadingVideo] = useState(false);
     const [openFaq, setOpenFaq] = useState(null);
+    const [editingAdId, setEditingAdId] = useState(null);
     const videoRef = useRef(null);
 
     const fetchAds = async () => {
@@ -98,6 +99,9 @@ const CoachingAds = () => {
                 }
             });
             setForm({ ...form, imageUrl: res.data.imageUrl });
+            if (editingAdId) {
+                setError('Note: New image will be visible after admin approval.');
+            }
         } catch (err) {
             setError('Failed to upload image');
         } finally {
@@ -109,10 +113,18 @@ const CoachingAds = () => {
         e.preventDefault();
         if (!form.imageUrl) return setError('Please upload an advertisement image');
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/api/ads`, form, {
-                headers: { Authorization: `Bearer ${user?.token}` }
-            });
+            if (editingAdId) {
+                await axios.put(`${import.meta.env.VITE_API_URL}/api/ads/${editingAdId}`, form, {
+                    headers: { Authorization: `Bearer ${user?.token}` }
+                });
+                alert('Ad updated! Any new images are waiting for admin approval.');
+            } else {
+                await axios.post(`${import.meta.env.VITE_API_URL}/api/ads`, form, {
+                    headers: { Authorization: `Bearer ${user?.token}` }
+                });
+            }
             setIsAdding(false);
+            setEditingAdId(null);
             setForm({ 
                 title: '', 
                 description: '', 
@@ -124,7 +136,7 @@ const CoachingAds = () => {
             });
             fetchAds();
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to create ad');
+            setError(err.response?.data?.message || 'Failed to save ad');
         }
     };
 
@@ -171,6 +183,21 @@ const CoachingAds = () => {
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to initiate payment');
         }
+    };
+
+    const handleEdit = (ad) => {
+        setEditingAdId(ad._id);
+        setForm({
+            title: ad.title,
+            description: ad.description,
+            imageUrl: ad.imageUrl,
+            link: ad.link || '',
+            duration: ad.duration,
+            videoUrl: ad.videoUrl || '',
+            socialLinks: ad.socialLinks || { facebook: '', instagram: '', twitter: '', youtube: '' }
+        });
+        setIsAdding(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleDelete = async (id) => {
@@ -389,7 +416,16 @@ const CoachingAds = () => {
                     ads.map(ad => (
                         <div key={ad._id} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden group hover:shadow-md transition-all">
                             <div className="aspect-video relative overflow-hidden">
-                                <img src={`${import.meta.env.VITE_API_URL}${ad.imageUrl}`} alt={ad.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                {ad.pendingImageUrl ? (
+                                    <div className="relative w-full h-full">
+                                        <img src={`${import.meta.env.VITE_API_URL}${ad.pendingImageUrl}`} alt="Pending" className="w-full h-full object-cover opacity-60" />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <span className="bg-amber-500 text-[10px] font-black text-white px-2 py-1 uppercase tracking-widest shadow-lg">New Image Pending Approval</span>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <img src={`${import.meta.env.VITE_API_URL}${ad.imageUrl}`} alt={ad.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                )}
                                 {ad.videoUrl && (
                                     <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1">
                                         <Video size={10} /> Video
@@ -443,12 +479,20 @@ const CoachingAds = () => {
                                                 <p className="font-black text-slate-700">{ad.clicks}</p>
                                             </div>
                                         </div>
-                                        <button 
-                                            onClick={() => handleDelete(ad._id)}
-                                            className="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-all"
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button 
+                                                onClick={() => handleEdit(ad)}
+                                                className="text-blue-500 hover:text-blue-700 p-2 hover:bg-blue-50 rounded-lg transition-all"
+                                            >
+                                                <Pencil size={18} />
+                                            </button>
+                                            <button 
+                                                onClick={() => handleDelete(ad._id)}
+                                                className="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-all"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -474,7 +518,7 @@ const CoachingAds = () => {
                     { q: 'How long can my institute video be?', a: 'You can upload a video of up to 5 minutes showcasing your institute, faculty, facilities, or results.' },
                     { q: 'What video formats are supported?', a: 'We support MP4 and MOV formats. The file size limit is 150MB.' },
                     { q: 'How long does admin approval take?', a: 'Ads are typically reviewed within 24–48 hours after payment is confirmed.' },
-                    { q: 'Can I edit my ad after submission?', a: 'Currently you can delete and re-create an ad. Editing existing ads will be available soon.' },
+                    { q: 'Can I edit my ad after submission?', a: 'Yes, you can edit your ad at any time. However, any new images uploaded will require admin approval before they appear live.' },
                     { q: 'What happens when my ad duration expires?', a: 'Your ad will automatically move to "expired" status and stop showing to students. You can create a new ad to continue.' },
                     { q: 'Is the payment refundable?', a: 'Payments are non-refundable once the ad is approved and goes live. Please review our Refund Policy for details.' },
                 ];

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Users, CreditCard, Bell, LogOut, GraduationCap, Building2, Menu, Megaphone } from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, Bell, LogOut, GraduationCap, Building2, Menu, Megaphone, Image } from 'lucide-react';
 
 const DashboardLayout = ({ children, role }) => {
     const { logout, user } = useAuth();
@@ -19,6 +19,7 @@ const DashboardLayout = ({ children, role }) => {
             { name: 'Subscriptions', path: '/admin/subscriptions', icon: CreditCard },
             { name: 'Payments', path: '/admin/payments', icon: CreditCard },
             { name: 'Advertisements', path: '/admin/ads', icon: Megaphone },
+            { name: 'Photo Approvals', path: '/admin/photo-approvals', icon: Image },
         ],
         tutor: [
             { name: 'Dashboard', path: '/tutor', icon: LayoutDashboard, end: true },

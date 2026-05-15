@@ -2,32 +2,48 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
-import { Users, Building2, GraduationCap, CreditCard, ArrowUpRight, CheckCircle2, Clock } from 'lucide-react';
+import { Users, Building2, GraduationCap, CreditCard, ArrowUpRight, CheckCircle2, Clock, Image as ImageIcon } from 'lucide-react';
 
 const AdminDashboard = () => {
     const { user } = useAuth();
-    const [stats, setStats] = useState({ total: 0, tutors: 0, coachings: 0, students: 0, pending: 0 });
+    const [stats, setStats] = useState({ total: 0, tutors: 0, coachings: 0, students: 0, pending: 0, pendingPhotos: 0 });
     const [pendingUsers, setPendingUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
-            headers: { Authorization: `Bearer ${user?.token}` }
-        }).then(res => {
-            const all = res.data;
-            const tutors = all.filter(u => u.role === 'tutor');
-            const coachings = all.filter(u => u.role === 'coaching');
-            const students = all.filter(u => u.role === 'student');
-            const pending = all.filter(u => !u.isApproved && (u.role === 'tutor' || u.role === 'coaching'));
-            setStats({
-                total: all.length,
-                tutors: tutors.length,
-                coachings: coachings.length,
-                students: students.length,
-                pending: pending.length
-            });
-            setPendingUsers(pending.slice(0, 5));
-        }).catch(() => {}).finally(() => setLoading(false));
+        const fetchData = async () => {
+            try {
+                const [usersRes, profilePhotosRes, adPhotosRes] = await Promise.all([
+                    axios.get(`${import.meta.env.VITE_API_URL}/api/users`, { headers: { Authorization: `Bearer ${user?.token}` } }),
+                    axios.get(`${import.meta.env.VITE_API_URL}/api/profiles/admin/pending-photos`, { headers: { Authorization: `Bearer ${user?.token}` } }),
+                    axios.get(`${import.meta.env.VITE_API_URL}/api/ads/admin/pending-photos`, { headers: { Authorization: `Bearer ${user?.token}` } })
+                ]);
+
+                const all = usersRes.data;
+                const tutors = all.filter(u => u.role === 'tutor');
+                const coachings = all.filter(u => u.role === 'coaching');
+                const students = all.filter(u => u.role === 'student');
+                const pending = all.filter(u => !u.isApproved && (u.role === 'tutor' || u.role === 'coaching'));
+                
+                const photoCount = profilePhotosRes.data.length + adPhotosRes.data.length;
+
+                setStats({
+                    total: all.length,
+                    tutors: tutors.length,
+                    coachings: coachings.length,
+                    students: students.length,
+                    pending: pending.length,
+                    pendingPhotos: photoCount
+                });
+                setPendingUsers(pending.slice(0, 5));
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
     }, [user]);
 
     const statCards = [
@@ -35,6 +51,7 @@ const AdminDashboard = () => {
         { label: 'Tutors', value: stats.tutors, icon: GraduationCap, color: 'text-blue-600', bg: 'bg-blue-50' },
         { label: 'Institutes', value: stats.coachings, icon: Building2, color: 'text-rose-600', bg: 'bg-rose-50' },
         { label: 'Students', value: stats.students, icon: CreditCard, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+        { label: 'Pending Photos', value: stats.pendingPhotos, icon: ImageIcon, color: 'text-amber-600', bg: 'bg-amber-50' },
     ];
 
     return (

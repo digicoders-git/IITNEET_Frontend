@@ -45,10 +45,12 @@ const TutorProfile = () => {
             Thursday:  { available: true, timing: 'Morning', from: '', to: '' },
             Friday:    { available: true, timing: 'Morning', from: '', to: '' },
             Saturday:  { available: true, timing: 'Morning', from: '', to: '' },
+            Sunday:    { available: false, timing: 'Morning', from: '', to: '' },
         },
         hasYoutube: false, youtubeChannel: '',
         location: '', pincode: '', locality: '',
         phone: '', mobileVisibility: 'paid', profileVisibility: 'all',
+        experience: '',
         bio: '',
     });
     const [otp, setOtp] = useState('');
@@ -60,6 +62,7 @@ const TutorProfile = () => {
     const [uploading, setUploading] = useState(false);
     const [msg, setMsg] = useState({ text: '', ok: true });
     const [photoUrl, setPhotoUrl] = useState('');
+    const [pendingPhotoUrl, setPendingPhotoUrl] = useState('');
     const [wordCount, setWordCount] = useState(0);
 
     const fetchProfile = () => {
@@ -107,6 +110,7 @@ const TutorProfile = () => {
                 const bio = profile.bio || '';
                 setWordCount(bio.trim() === '' ? 0 : bio.trim().split(/\s+/).length);
                 if (profile.profileImage) setPhotoUrl(`${import.meta.env.VITE_API_URL}${profile.profileImage}`);
+                if (profile.pendingProfileImage) setPendingPhotoUrl(`${import.meta.env.VITE_API_URL}${profile.pendingProfileImage}`);
             }
         }).catch(() => {}).finally(() => setLoading(false));
     };
@@ -147,8 +151,8 @@ const TutorProfile = () => {
                 }
             );
             console.log('Upload response:', res.data);
-            setPhotoUrl(`${import.meta.env.VITE_API_URL}${res.data.imageUrl}`);
-            setMsg({ text: 'Photo uploaded successfully!', ok: true });
+            setPendingPhotoUrl(`${import.meta.env.VITE_API_URL}${res.data.imageUrl}`);
+            setMsg({ text: 'Photo uploaded successfully and is waiting for admin approval!', ok: true });
         } catch (err) {
             console.error('Upload error:', err);
             const errorMsg = err.response?.data?.message || err.message || 'Photo upload failed';
@@ -258,7 +262,14 @@ const TutorProfile = () => {
                         <Label>Photo</Label>
                         <div className="relative">
                             <div className="w-28 h-28 border-2 border-gray-300 bg-gray-100 flex items-center justify-center overflow-hidden">
-                                {photoUrl ? (
+                                {pendingPhotoUrl ? (
+                                    <div className="relative w-full h-full">
+                                        <img src={pendingPhotoUrl} alt="Pending" className="w-full h-full object-cover opacity-60" />
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <span className="bg-amber-500 text-[8px] font-black text-white px-1.5 py-0.5 uppercase tracking-tighter shadow-lg">Pending Approval</span>
+                                        </div>
+                                    </div>
+                                ) : photoUrl ? (
                                     <img src={photoUrl} alt="Profile" className="w-full h-full object-cover" />
                                 ) : (
                                     <span className="text-4xl font-bold text-blue-900">
@@ -295,7 +306,7 @@ const TutorProfile = () => {
                                 {originalData.name && <p className="text-[10px] text-gray-400 mt-0.5">Name cannot be changed</p>}
                             </div>
                         </div>
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <Label>Age</Label>
                                 <input type="number" className={`input-field ${originalData.age ? 'bg-gray-100' : ''}`} placeholder="Age" min="18" max="80"
@@ -314,6 +325,9 @@ const TutorProfile = () => {
                                 </select>
                                 {originalData.sex && <p className="text-[10px] text-gray-400 mt-0.5">Sex cannot be changed</p>}
                             </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 mt-4">
                             <div>
                                 <Label>Maximum Qualification</Label>
                                 <select className="input-field" value={form.qualification} onChange={e => setForm(f => ({ ...f, qualification: e.target.value }))}>
@@ -324,6 +338,11 @@ const TutorProfile = () => {
                                     <input className="input-field mt-2" placeholder="Please specify qualification"
                                         value={form.otherQualification} onChange={e => setForm(f => ({ ...f, otherQualification: e.target.value }))} />
                                 )}
+                            </div>
+                            <div>
+                                <Label>Teaching Experience (Years)</Label>
+                                <input type="number" className="input-field" placeholder="Total Years" min="0" max="60"
+                                    value={form.experience} onChange={e => setForm(f => ({ ...f, experience: e.target.value }))} />
                             </div>
                         </div>
                     </div>
