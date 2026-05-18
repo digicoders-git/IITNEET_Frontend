@@ -192,74 +192,128 @@ const AdvertisingPage = () => {
                         <div className="text-center mb-16 relative">
                             <h2 className="text-4xl font-black text-blue-900 mb-4 uppercase tracking-tighter">Premium Partners</h2>
                             <div className="w-24 h-1.5 bg-amber-500 mx-auto rounded-full shadow-sm shadow-amber-500/20"></div>
-                            {/* Decorative element */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-50/50 font-black text-7xl -z-10 select-none">PARTNERS</div>
                         </div>
 
-                        <div className="max-w-6xl mx-auto relative group">
-                            <div className="overflow-hidden rounded-[3rem] bg-white border border-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transition-shadow hover:shadow-[0_40px_80px_-15px_rgba(30,58,138,0.15)]">
-                                <div className="flex flex-col lg:flex-row">
-                                    <div className="lg:w-[55%] relative aspect-[16/10] lg:aspect-auto overflow-hidden cursor-pointer group/img" onClick={() => handleAdClick(ads[activeIndex]._id, ads[activeIndex].link)}>
-                                        <img 
-                                            src={`${import.meta.env.VITE_API_URL}${ads[activeIndex].imageUrl}`} 
-                                            alt={ads[activeIndex].title} 
-                                            className="w-full h-full object-cover transition-transform duration-1000 group-hover/img:scale-110"
-                                        />
-                                        <div className="absolute top-8 left-8 bg-blue-900/90 backdrop-blur-md text-white text-[11px] font-black px-5 py-2 rounded-full uppercase tracking-[0.15em] shadow-2xl border border-white/20">
-                                            Partner Highlight
-                                        </div>
+                        <div className="max-w-5xl mx-auto relative group">
+                            {/* Tabular Advertisement Card matching user image */}
+                            <div className="bg-white border-2 border-slate-300 rounded-2xl overflow-hidden shadow-2xl transition-all">
+                                {/* Top Banner Image */}
+                                <div 
+                                    className="w-full aspect-[16/7] md:aspect-[21/9] relative overflow-hidden bg-slate-100 cursor-pointer group/banner"
+                                    onClick={() => handleAdClick(ads[activeIndex]._id, ads[activeIndex].link)}
+                                >
+                                    <img 
+                                        src={`${import.meta.env.VITE_API_URL}${ads[activeIndex].imageUrl}`} 
+                                        alt={ads[activeIndex].title} 
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover/banner:scale-105"
+                                    />
+                                    <div className="absolute top-6 left-6 bg-amber-500 text-blue-900 text-[10px] font-black px-4 py-1.5 rounded uppercase tracking-widest shadow-lg border border-blue-900/10">
+                                        Featured Partner
                                     </div>
-                                    <div className="lg:w-[45%] p-10 lg:p-16 flex flex-col justify-center bg-white relative">
-                                        <div className="flex items-center gap-5 mb-8">
-                                            <div className="w-16 h-16 rounded-2xl border-2 border-blue-50 overflow-hidden shadow-md shrink-0 bg-white">
-                                                {ads[activeIndex].coachingLogo ? (
-                                                    <img src={`${import.meta.env.VITE_API_URL}${ads[activeIndex].coachingLogo}`} alt="Logo" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <div className="w-full h-full bg-blue-50 flex items-center justify-center text-blue-900 font-black text-2xl">
-                                                        {ads[activeIndex].coachingId?.name?.charAt(0)}
-                                                    </div>
-                                                )}
+                                </div>
+
+                                {/* Bottom Tabular Section */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 border-t-2 border-slate-300 divide-y-2 md:divide-y-0 md:divide-x-2 divide-slate-300 bg-white">
+                                    {/* Left Half */}
+                                    <div className="flex flex-col divide-y-2 divide-slate-300">
+                                        {/* Row 1: Name & Category */}
+                                        <div className="grid grid-cols-2 divide-x-2 divide-slate-300 text-center">
+                                            <div className="p-4 flex flex-col justify-center items-center bg-white">
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Name of Institute</span>
+                                                <span className="font-black text-slate-900 text-sm md:text-base tracking-tight truncate w-full px-2">
+                                                    {ads[activeIndex].coachingId?.name || ads[activeIndex].title}
+                                                </span>
                                             </div>
-                                            <div>
-                                                <h4 className="font-extrabold text-blue-900 text-lg leading-tight transition-colors">{ads[activeIndex].coachingId?.name}</h4>
-                                                <div className="flex items-center gap-1.5 text-[11px] text-gray-400 font-bold uppercase tracking-[0.1em] mt-1.5">
-                                                    <MapPin size={13} className="text-amber-500" /> {ads[activeIndex].coachingId?.city}
-                                                </div>
+                                            <div className="p-4 flex flex-col justify-center items-center bg-white">
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Category</span>
+                                                <span className="font-black text-slate-900 text-sm md:text-base tracking-tight">
+                                                    {ads[activeIndex].category || 'IIT & NEET'}
+                                                </span>
                                             </div>
                                         </div>
 
-                                        <h3 className="text-3xl font-black text-gray-900 mb-6 leading-[1.1] tracking-tight">{ads[activeIndex].title}</h3>
-                                        <p className="text-gray-500 leading-relaxed mb-10 text-lg font-medium opacity-80">{ads[activeIndex].description}</p>
+                                        {/* Row 2: City, Pincode, Street */}
+                                        <div className="grid grid-cols-3 divide-x-2 divide-slate-300 text-center">
+                                            <div className="p-4 flex flex-col justify-center items-center bg-white">
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">City</span>
+                                                <span className="font-black text-slate-800 text-xs md:text-sm truncate w-full">
+                                                    {ads[activeIndex].coachingId?.city || 'Kolkata'}
+                                                </span>
+                                            </div>
+                                            <div className="p-4 flex flex-col justify-center items-center bg-white">
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Pincode</span>
+                                                <span className="font-black text-slate-800 text-xs md:text-sm">
+                                                    {ads[activeIndex].coachingId?.pincode || '700042'}
+                                                </span>
+                                            </div>
+                                            <div className="p-4 flex flex-col justify-center items-center bg-white">
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Street/Locality/Mohalla</span>
+                                                <span className="font-black text-slate-800 text-xs md:text-sm truncate w-full px-1">
+                                                    {ads[activeIndex].coachingId?.address || ads[activeIndex].coachingId?.locality || '40E, Dharmatala Road'}
+                                                </span>
+                                            </div>
+                                        </div>
 
-                                        <div className="flex flex-wrap items-center gap-4 mt-auto">
-                                            <div className="flex items-center gap-2.5">
+                                        {/* Row 3: Address & Contact info bar */}
+                                        <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/80 mt-auto">
+                                            <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                                                <MapPin size={14} className="text-amber-500 shrink-0" />
+                                                <span className="truncate">Address with contact numbers & website (if any)</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 shrink-0">
                                                 {ads[activeIndex].socialLinks?.instagram && (
-                                                    <a href={`https://instagram.com/${ads[activeIndex].socialLinks.instagram}`} target="_blank" rel="noopener noreferrer" className="w-11 h-11 flex items-center justify-center bg-gray-50 text-gray-400 rounded-2xl hover:bg-gradient-to-tr hover:from-amber-400 hover:via-pink-500 hover:to-purple-600 hover:text-white transition-all shadow-sm">
-                                                        <Instagram size={20} />
+                                                    <a href={`https://instagram.com/${ads[activeIndex].socialLinks.instagram}`} target="_blank" rel="noopener noreferrer" className="w-7 h-7 flex items-center justify-center bg-white text-pink-600 border border-slate-200 rounded-lg hover:bg-pink-50 transition-all">
+                                                        <Instagram size={14} />
                                                     </a>
                                                 )}
                                                 {ads[activeIndex].socialLinks?.facebook && (
-                                                    <a href={ads[activeIndex].socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="w-11 h-11 flex items-center justify-center bg-gray-50 text-gray-400 rounded-2xl hover:bg-blue-600 hover:text-white transition-all shadow-sm">
-                                                        <Facebook size={20} />
+                                                    <a href={ads[activeIndex].socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="w-7 h-7 flex items-center justify-center bg-white text-blue-600 border border-slate-200 rounded-lg hover:bg-blue-50 transition-all">
+                                                        <Facebook size={14} />
                                                     </a>
                                                 )}
                                                 {ads[activeIndex].socialLinks?.youtube && (
-                                                    <a href={ads[activeIndex].socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="w-11 h-11 flex items-center justify-center bg-gray-50 text-gray-400 rounded-2xl hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                                                        <Youtube size={20} />
+                                                    <a href={ads[activeIndex].socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="w-7 h-7 flex items-center justify-center bg-white text-red-600 border border-slate-200 rounded-lg hover:bg-red-50 transition-all">
+                                                        <Youtube size={14} />
+                                                    </a>
+                                                )}
+                                                {ads[activeIndex].link && (
+                                                    <a href={ads[activeIndex].link.startsWith('http') ? ads[activeIndex].link : `https://${ads[activeIndex].link}`} target="_blank" rel="noopener noreferrer" className="w-7 h-7 flex items-center justify-center bg-white text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-100 transition-all">
+                                                        <Globe size={14} />
                                                     </a>
                                                 )}
                                             </div>
-                                            <button 
-                                                onClick={() => {
-                                                    if (ads[activeIndex].coachingId?._id) {
-                                                        navigate(`/coachings/${ads[activeIndex].coachingId._id}`);
-                                                    }
-                                                }}
-                                                className="ml-auto bg-blue-900 text-white px-8 py-4 rounded-[1.25rem] font-bold text-sm flex items-center gap-3 hover:bg-amber-500 hover:scale-105 transition-all shadow-xl shadow-blue-900/10 active:scale-95"
-                                            >
-                                                View Profile <ArrowRight size={18} />
-                                            </button>
                                         </div>
+                                    </div>
+
+                                    {/* Right Half: Video & Description */}
+                                    <div className="p-6 flex flex-col justify-center items-center bg-slate-50/50 text-center">
+                                        {ads[activeIndex].videoUrl ? (
+                                            <div className="w-full aspect-video rounded-xl overflow-hidden border-2 border-slate-200 shadow-inner mb-4 bg-black">
+                                                <video src={`${import.meta.env.VITE_API_URL}${ads[activeIndex].videoUrl}`} controls className="w-full h-full object-contain" />
+                                            </div>
+                                        ) : (
+                                            <div className="w-full py-8 px-4 border-2 border-dashed border-slate-300 rounded-xl bg-white mb-4 flex flex-col items-center justify-center text-slate-400 shadow-sm">
+                                                <p className="text-sm font-bold text-slate-700 mb-1">Please upload video here</p>
+                                                <p className="text-xs text-slate-500 mb-1">About you and your institute</p>
+                                                <p className="text-[11px] text-slate-400">Not more than 5 minutes</p>
+                                            </div>
+                                        )}
+                                        
+                                        <p className="text-sm font-medium text-slate-600 leading-relaxed max-w-md line-clamp-3 mb-5">
+                                            {ads[activeIndex].description || 'Best Coaching Center providing expert guidance, small batches, skilled teachers, monthly mock tests, and guaranteed results.'}
+                                        </p>
+                                        
+                                        <button 
+                                            onClick={() => {
+                                                if (ads[activeIndex].coachingId?._id) {
+                                                    navigate(`/coachings/${ads[activeIndex].coachingId._id}`);
+                                                }
+                                            }}
+                                            className="bg-blue-900 text-white px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2 hover:bg-amber-500 hover:text-blue-900 transition-all shadow-md mt-auto"
+                                        >
+                                            View Complete Profile <ArrowRight size={14} />
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -269,18 +323,18 @@ const AdvertisingPage = () => {
                                 <>
                                     <button 
                                         onClick={prevAd}
-                                        className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-white rounded-2xl shadow-2xl flex items-center justify-center text-blue-900 hover:bg-amber-500 hover:text-white transition-all z-20 group/btn"
+                                        className="absolute left-0 top-1/3 md:top-1/2 -translate-x-1/2 md:-translate-x-6 -translate-y-1/2 w-12 h-12 bg-white border-2 border-slate-200 rounded-full shadow-2xl flex items-center justify-center text-blue-900 hover:bg-amber-500 hover:border-amber-500 hover:text-white transition-all z-20 group/btn"
                                     >
-                                        <ArrowRight size={28} className="rotate-180 group-hover/btn:-translate-x-1 transition-transform" />
+                                        <ArrowRight size={24} className="rotate-180 group-hover/btn:-translate-x-0.5 transition-transform" />
                                     </button>
                                     <button 
                                         onClick={nextAd}
-                                        className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-white rounded-2xl shadow-2xl flex items-center justify-center text-blue-900 hover:bg-amber-500 hover:text-white transition-all z-20 group-hover/btn"
+                                        className="absolute right-0 top-1/3 md:top-1/2 translate-x-1/2 md:translate-x-6 -translate-y-1/2 w-12 h-12 bg-white border-2 border-slate-200 rounded-full shadow-2xl flex items-center justify-center text-blue-900 hover:bg-amber-500 hover:border-amber-500 hover:text-white transition-all z-20 group-hover/btn"
                                     >
-                                        <ArrowRight size={28} className="group-hover/btn:translate-x-1 transition-transform" />
+                                        <ArrowRight size={24} className="group-hover/btn:translate-x-0.5 transition-transform" />
                                     </button>
                                     
-                                    <div className="flex justify-center gap-3 mt-12">
+                                    <div className="flex justify-center gap-3 mt-10">
                                         {ads.map((_, i) => (
                                             <button 
                                                 key={i}

@@ -37,10 +37,16 @@ import Help from './pages/public/Help';
 
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-    const { user, loading } = useAuth();
+    const { user, allUsers, loading } = useAuth();
     if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin"></div></div>;
-    if (!user) return <Navigate to="/login" />;
-    if (allowedRoles && Array.isArray(allowedRoles) && !allowedRoles.includes(user.role)) return <Navigate to="/" />;
+    
+    if (allowedRoles && Array.isArray(allowedRoles)) {
+        const hasRole = allowedRoles.some(role => allUsers && allUsers[role]);
+        if (!hasRole) return <Navigate to="/login" />;
+        return children;
+    }
+
+    if (!user && (!allUsers || !Object.values(allUsers).some(Boolean))) return <Navigate to="/login" />;
     return children;
 };
 
@@ -52,11 +58,13 @@ const ScrollToTop = () => {
 
 const AppContent = () => {
     const location = useLocation();
-    const { user } = useAuth();
-    const isPanel = location.pathname.startsWith('/admin') || 
-                  location.pathname.startsWith('/tutor') || 
-                  location.pathname.startsWith('/coaching') || 
-                  location.pathname.startsWith('/student');
+    const { updateActiveUserForPath } = useAuth();
+    
+    useEffect(() => {
+        if (updateActiveUserForPath) {
+            updateActiveUserForPath(location.pathname);
+        }
+    }, [location.pathname]);
     
     return (
         <>

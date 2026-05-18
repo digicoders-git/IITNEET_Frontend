@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Menu, X, ChevronDown } from 'lucide-react';
 
 const Navbar = () => {
-    const { user, logout } = useAuth();
+    const { user, allUsers, logout } = useAuth();
     const location = useLocation();
     const [menuOpen, setMenuOpen] = useState(false);
     const [helpOpen, setHelpOpen] = useState(false);
@@ -83,15 +83,30 @@ const Navbar = () => {
 
                 {/* Auth Buttons */}
                 <div className="hidden md:flex items-center gap-3">
-                    {user ? (
-                        <div className="flex items-center gap-3">
-                            <Link to={`/${user.role}`}
-                                className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 font-bold text-sm transition-all">
-                                My Dashboard
-                            </Link>
-                            <button onClick={logout}
-                                className="text-sm font-semibold text-white hover:text-amber-400 transition-colors">
-                                Logout
+                    {(allUsers?.admin || allUsers?.tutor || allUsers?.coaching || allUsers?.student) ? (
+                        <div className="flex items-center gap-2">
+                            {allUsers.admin && (
+                                <Link to="/admin" className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 font-bold text-xs rounded transition-all">
+                                    Admin Panel
+                                </Link>
+                            )}
+                            {allUsers.tutor && (
+                                <Link to="/tutor" className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 font-bold text-xs rounded transition-all">
+                                    Tutor Panel
+                                </Link>
+                            )}
+                            {allUsers.coaching && (
+                                <Link to="/coaching" className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 font-bold text-xs rounded transition-all">
+                                    Coaching Panel
+                                </Link>
+                            )}
+                            {allUsers.student && (
+                                <Link to="/student" className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 font-bold text-xs rounded transition-all">
+                                    Student Panel
+                                </Link>
+                            )}
+                            <button onClick={() => logout()} className="text-xs font-semibold text-white hover:text-amber-400 ml-2 transition-colors">
+                                Logout All
                             </button>
                         </div>
                     ) : (
@@ -137,15 +152,14 @@ const Navbar = () => {
                     </div>
 
                     <div className="pt-3 flex flex-col gap-2">
-                        {user ? (
+                        {(allUsers?.admin || allUsers?.tutor || allUsers?.coaching || allUsers?.student) ? (
                             <>
-                                <Link to={`/${user.role}`} onClick={() => setMenuOpen(false)}
-                                    className="bg-amber-500 text-white font-bold py-2.5 px-4 text-sm text-center">
-                                    My Dashboard
-                                </Link>
-                                <button onClick={() => { logout(); setMenuOpen(false); }}
-                                    className="text-sm font-semibold text-blue-200 py-2">Logout</button>
-                                </>
+                                {allUsers.admin && <Link to="/admin" onClick={() => setMenuOpen(false)} className="bg-red-600 text-white font-bold py-2 px-4 text-sm text-center rounded">Admin Panel</Link>}
+                                {allUsers.tutor && <Link to="/tutor" onClick={() => setMenuOpen(false)} className="bg-blue-600 text-white font-bold py-2 px-4 text-sm text-center rounded">Tutor Panel</Link>}
+                                {allUsers.coaching && <Link to="/coaching" onClick={() => setMenuOpen(false)} className="bg-purple-600 text-white font-bold py-2 px-4 text-sm text-center rounded">Coaching Panel</Link>}
+                                {allUsers.student && <Link to="/student" onClick={() => setMenuOpen(false)} className="bg-emerald-600 text-white font-bold py-2 px-4 text-sm text-center rounded">Student Panel</Link>}
+                                <button onClick={() => { logout(); setMenuOpen(false); }} className="text-sm font-semibold text-blue-200 py-2">Logout All</button>
+                            </>
                         ) : (
                             <>
                                 <Link to="/login" onClick={() => setMenuOpen(false)}
