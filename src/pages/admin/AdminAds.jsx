@@ -25,7 +25,7 @@ const AdminAds = () => {
     const fetchAllAds = async () => {
         setLoading(true);
         try {
-            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/ads/all`, {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/ads/admin/all`, {
                 headers: { Authorization: `Bearer ${user?.token}` }
             });
             setAds(res.data);
