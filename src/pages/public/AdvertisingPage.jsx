@@ -24,6 +24,7 @@ const AdvertisingPage = () => {
             try {
                 const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/ads/active`);
                 setAds(Array.isArray(res.data) ? res.data : []);
+                console.log(res.data)
             } catch (err) {
                 console.error('Failed to fetch ads', err);
                 setAds([]);
@@ -38,6 +39,7 @@ const AdvertisingPage = () => {
         if (ads.length > 1) {
             const timer = setInterval(() => {
                 setActiveIndex((prev) => (prev + 1) % ads.length);
+                
             }, 5000);
             return () => clearInterval(timer);
         }
@@ -294,9 +296,9 @@ const AdvertisingPage = () => {
                                             </div>
                                         ) : (
                                             <div className="w-full py-8 px-4 border-2 border-dashed border-slate-300 rounded-xl bg-white mb-4 flex flex-col items-center justify-center text-slate-400 shadow-sm">
-                                                <p className="text-sm font-bold text-slate-700 mb-1">Please upload video here</p>
-                                                <p className="text-xs text-slate-500 mb-1">About you and your institute</p>
-                                                <p className="text-[11px] text-slate-400">Not more than 5 minutes</p>
+                                                <p className="text-sm font-bold text-slate-700 mb-1">No Video Available</p>
+                                                {/* <p className="text-xs text-slate-500 mb-1">About you and your institute</p> */}
+                                                {/* <p className="text-[11px] text-slate-400">Not more than 5 minutes</p> */}
                                             </div>
                                         )}
                                         
@@ -306,7 +308,10 @@ const AdvertisingPage = () => {
                                         
                                         <button 
                                             onClick={() => {
-                                                if (ads[activeIndex].coachingId?._id) {
+                                                console.log("btn clicked")
+                                                console.log(ads[activeIndex]?.coachingId?._id)
+                                                console.log(`/coachings/${ads[activeIndex].coachingId._id}`)
+                                                if (ads[activeIndex]?.coachingId?._id) {
                                                     navigate(`/coachings/${ads[activeIndex].coachingId._id}`);
                                                 }
                                             }}
@@ -316,7 +321,7 @@ const AdvertisingPage = () => {
                                         </button>
                                     </div>
                                 </div>
-                            </div>
+                            </div>  
 
                             {/* Carousel Controls */}
                             {ads.length > 1 && (
