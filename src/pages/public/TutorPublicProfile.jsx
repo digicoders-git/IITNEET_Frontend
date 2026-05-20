@@ -120,11 +120,11 @@ const TutorPublicProfile = () => {
                                     style={{ pointerEvents: 'none', userSelect: 'none', WebkitUserSelect: 'none' }}
                                 />
                             </div>
-                            {tutor.subscriptionStatus === 'active' && (
+                            {/* {tutor.subscriptionStatus === 'active' && (
                                 <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-950 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1.5 border-2 border-white">
                                     <Star size={12} fill="currentColor" /> Premium
                                 </div>
-                            )}
+                            )} */}
                         </div>
 
                         {/* Basic Info */}
