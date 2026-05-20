@@ -38,3 +38,20 @@
     @apply container mx-auto px-6 md:px-10 lg:px-16;
   }
 }
+
+/* ── Photo Protection ── */
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+/* Protect profile photos specifically */
+.photo-protected {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}

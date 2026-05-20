@@ -97,7 +97,7 @@ const TutorPublicProfile = () => {
     const avatarUrl = profile?.profileImage ? `${import.meta.env.VITE_API_URL}${profile.profileImage}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(tutor.name)}&size=300&background=1e3a8a&color=fff&bold=true`;
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-slate-50" onContextMenu={e => { if (e.target.tagName === 'IMG') e.preventDefault(); }}>
             <Navbar />
 
             {/* Header / Hero */}
@@ -111,11 +111,18 @@ const TutorPublicProfile = () => {
                         {/* Profile Photo */}
                         <div className="relative group shrink-0 mx-auto md:mx-0">
                             <div className="w-40 h-40 md:w-56 md:h-56 rounded-3xl overflow-hidden shadow-2xl border-4 border-white">
-                                <img src={avatarUrl} alt={tutor.name} className="w-full h-full object-cover" />
+                                <img
+                                    src={avatarUrl}
+                                    alt={tutor.name}
+                                    className="w-full h-full object-cover select-none"
+                                    onContextMenu={e => e.preventDefault()}
+                                    draggable={false}
+                                    style={{ pointerEvents: 'none', userSelect: 'none', WebkitUserSelect: 'none' }}
+                                />
                             </div>
                             {tutor.subscriptionStatus === 'active' && (
                                 <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-950 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1.5 border-2 border-white">
-                                    <Star size={12} fill="currentColor" /> Featured
+                                    <Star size={12} fill="currentColor" /> Premium
                                 </div>
                             )}
                         </div>

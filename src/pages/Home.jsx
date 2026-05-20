@@ -209,13 +209,13 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* ── FEATURED TUTORS ── */}
+            {/* ── TOP TUTORS ── */}
             <section className="py-16 bg-gray-50">
                 <div className="page-container">
                     <div className="flex justify-between items-end mb-10">
                         <div>
                             <p className="text-amber-500 font-semibold text-sm uppercase tracking-widest mb-1">Top Educators</p>
-                            <h2 className="text-3xl font-bold text-blue-900">Featured Tutors</h2>
+                            <h2 className="text-3xl font-bold text-blue-900">Top Tutors</h2>
                         </div>
                         <Link to="/tutors" className="flex items-center gap-1 text-sm font-bold text-blue-900 hover:text-amber-500 transition-colors">
                             View All <ArrowRight size={16} />
@@ -234,7 +234,7 @@ const Home = () => {
                         ) : featured.length === 0 ? (
                             <div className="col-span-3 text-center py-10 text-gray-400">
                                 <GraduationCap size={40} className="mx-auto mb-3 text-gray-300" />
-                                <p>No featured tutors yet. <Link to="/register?role=tutor" className="text-blue-900 font-bold hover:text-amber-500">Be the first to register!</Link></p>
+                                <p>No tutors registered yet. <Link to="/register?role=tutor" className="text-blue-900 font-bold hover:text-amber-500">Be the first to register!</Link></p>
                             </div>
                         ) : featured.slice(0, 3).map(profile => (
                             <Link key={profile._id} to={`/tutors/${profile.user._id}`}
